@@ -32,3 +32,7 @@
 *.vsidx
 *.ipch
 *.opendb
+/StarvingCat/.vs
+/StarvingCat/StarvingCat/x64
+/StarvingCat/StarvingCat/x64/Debug
+*.pdb
