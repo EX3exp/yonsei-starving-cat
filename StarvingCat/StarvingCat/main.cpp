@@ -19,20 +19,24 @@
 #include <learnopengl/model_animation.h>
 #include <iostream>
 
+#include <learnopengl/render_text.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <unordered_map>
 
+glm::vec3 darkblue = glm::vec3(0.06, 0.08, 0.71);
 // Source and Data directories
 string sourceDirStr = "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat";
-string modelDirStr = "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\data";
+string dataDirStr = "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\data";
+string fontPath = dataDirStr + "\\fonts\\Galmuri14.ttf";
+
 
 enum Scene
 { // 현재 렌더되는 화면을 구분하는 enum -- 씬 전환 시  
     cat_init, // 게임 기동 시 맨 처음 화면
-    cat_eat_right,
-    cat_eat_left
+    cat_eat_right, // 고양이가 오른쪽 밥그릇에서 먹음
+    cat_eat_left // 고양이가 왼쪽 밥그릇에서 먹음 
 };
 
 // FUNCTION PROTOTYPES
@@ -48,15 +52,18 @@ const double MAX_FRAMERATE_LIMIT = 1.0 / 60.0; // 현재 프레임레이트 -- 기본값은 
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
-const int MAX_STAGE = 10;
-const int MIN_STAGE = 1;
+const int MAX_STAGE = 9;
+const int MIN_STAGE = 0;
 
 // share variables
-static int stage; // stage, 1~10
+static int stage; // stage, 0~9
 static float catSize; // stage가 늘 때마다 증가
 string foodRight = "none"; // 오른쪽 밥그릇에 있는 food, 아무것도 없을 때엔 "none"
 string foodLeft = "none"; // 왼쪽 밥그릇에 있는 food, 아무것도 없을 때엔 "none"
 Scene currentScene = cat_init; // 씬 전환 시 이 변수를 변경해 주세요
+
+
+Text* messageText;
 
 GLFWwindow *mainWindow = NULL;
 
@@ -67,14 +74,23 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
 // timing
-double deltaTime = 0.0;
-double lastUpdateTime = 0.0;
-double lastFrameTime = 0.0;
+GLdouble deltaTime = 0.0f;
+GLdouble lastUpdateTime = 0.0f;
+GLdouble lastFrameTime = 0.0f;
 
+// 정수 => 유니코드 문자열로 바꾸는 함수
+std::u32string intToChar32(const int i) 
+{
+    auto s = std::to_string(i);
+    return { s.begin(), s.end() };
+}
+
+// 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용 - 애니메이팅 적용되는 오브젝트의 경우 AnimatedObj3D 상속해야 함
 class Obj3D
-{ // 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용 - 애니메이팅 적용되는 오브젝트의 경우 AnimatedObj3D 상속해야 함
+{ 
 public:
-    Obj3D(string name, string modelPath, string vertexShaderPath, string fragShaderPath) : modelPath(modelPath), model(modelPath), shader(vertexShaderPath.c_str(), fragShaderPath.c_str())
+    Obj3D(string name, string modelPath, string vertexShaderPath, string fragShaderPath) 
+        : modelPath(modelPath), model(modelPath), shader(vertexShaderPath.c_str(), fragShaderPath.c_str())
     {
         cout << "[Obj3D] '" + name + "' object created" << endl;
     }
@@ -107,11 +123,13 @@ public:
     {
     }
     
-    void translate(float x = 0.f, float y = -0.4f, float z = 0.f) {
+    void translate(float x = 0.f, float y = -0.4f, float z = 0.f) 
+    {
         modelMatrix = glm::translate(modelMatrix, glm::vec3(x, y, z));
     }
 
-    void scale(float x = .5f, float y = .5f, float z = .5f) {
+    void scale(float x = .5f, float y = .5f, float z = .5f) 
+    {
         modelMatrix = glm::scale(modelMatrix, glm::vec3(x, y, z));
     }
 protected:
@@ -130,8 +148,9 @@ protected:
     std::vector<glm::mat4> transformsMatrixes = animator.GetFinalBoneMatrices();
 };
 
+// 애니메이팅되는 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용
 class AnimatedObj3D : public Obj3D
-{ // 애니메이팅되는 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용
+{ 
 public:
     AnimatedObj3D(string name, string modelPath, string vertexShaderPath, string fragShaderPath) : Obj3D(name, modelPath, vertexShaderPath, fragShaderPath)
     {
@@ -144,17 +163,18 @@ public:
         animator.UpdateAnimation(deltaTime); // update animation
     }
 
-    void sendAnimationToShader() override {
+    void sendAnimationToShader() override 
+    {
         transformsMatrixes = animator.GetFinalBoneMatrices();
-        for (int i = 0; i < transformsMatrixes.size(); ++i)
+        for (int i = 0; i < transformsMatrixes.size(); ++i) {
             shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transformsMatrixes[i]);
+        }
     }
 };
 
-
-
+// 고양이
 class Cat : public AnimatedObj3D
-{ // 고양이
+{ 
 public:
     Cat(string modelPath, string vertexShaderPath, string fragShaderPath) : AnimatedObj3D("cat", modelPath, vertexShaderPath, fragShaderPath) 
     {
@@ -163,12 +183,10 @@ public:
 
     void eat(string &food) 
     {
-        if (!checkCanEat(food)) 
-        { // 먹을 수 없는 걸 먹음
+        if (!checkCanEat(food)) { // 먹을 수 없는 걸 먹음
             
         }
-        else 
-        { // 먹을 수 있는 걸 먹음
+        else { // 먹을 수 있는 걸 먹음
 
         }
     }
@@ -185,25 +203,43 @@ int main()
 {
     mainWindow = glAllInit();
 
-	// build and compile shaders
-	// -------------------------
-    string vs = sourceDirStr + "\\skel_anim.vs"; // vertex shader
-    string fs = sourceDirStr + "\\skel_anim.fs"; // fragment shader
+	
 
 	// load models
 	// -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
-    string catModelPath = modelDirStr + "\\boxing\\dae\\boxing.dae"; // 고양이 모델의 경로
+    string catModelPath = dataDirStr + "\\boxing\\dae\\boxing.dae"; // 고양이 모델의 경로
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
     
+    // build and compile shaders
+    // -------------------------
+    string vs = sourceDirStr + "\\skel_anim.vs"; // vertex shader
+    string fs = sourceDirStr + "\\skel_anim.fs"; // fragment shader
+
+    string vsText = sourceDirStr + "\\text_render.vs"; // text용 vertex shader
+    string fsText = sourceDirStr + "\\text_render.fs"; // text용 fragment shader
+
+
     Cat *cat = new Cat(catModelPath, vs, fs);
     cat->translate();
     cat->scale();
+
+    Text* mainText;
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    
+    glm::mat4 textProjection = glm::ortho(0.0f, static_cast<GLfloat>(SCR_WIDTH), 0.0f, static_cast<GLfloat>(SCR_HEIGHT));
+
+    mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
+    messageText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
+    glEnable(GL_CULL_FACE); // cull face to reduce memory usage
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(mainWindow))
     {
-        double now = glfwGetTime();
+        GLdouble now = glfwGetTime();
         deltaTime = now - lastFrameTime;
 
         glfwPollEvents();
@@ -212,11 +248,13 @@ int main()
         {
             processInput(mainWindow);
             // draw your frame here
-            glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+            glClearColor(1.f,1.f, 1.f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             cat->draw(); // Draw & animate cat
 
+            mainText->draw();
+            messageText->draw();
             glfwSwapBuffers(mainWindow);
 
             lastFrameTime = now;
@@ -270,6 +308,7 @@ GLFWwindow *glAllInit()
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
     
+    
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
@@ -281,9 +320,12 @@ GLFWwindow *glAllInit()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        messageText->setText(U"왼쪽 음식을 먹습니다.");
+    }
     /*
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -303,6 +345,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
+    
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

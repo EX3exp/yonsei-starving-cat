@@ -24,6 +24,12 @@
     <None Include="skel_anim.vs">
       <Filter>소스 파일</Filter>
     </None>
+    <None Include="text_render.vs">
+      <Filter>소스 파일</Filter>
+    </None>
+    <None Include="text_render.fs">
+      <Filter>소스 파일</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

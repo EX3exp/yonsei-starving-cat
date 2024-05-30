@@ -39,19 +39,9 @@ struct Texture {
 
 class Mesh {
 public:
-    // mesh Data
-    vector<Vertex>       vertices;
-    vector<unsigned int> indices;
-    vector<Texture>      textures;
-    unsigned int VAO;
-
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> &vertices, vector<unsigned int> &indices, vector<Texture> &textures): vertices(vertices), indices(indices), textures(textures)
     {
-        this->vertices = vertices;
-        this->indices = indices;
-        this->textures = textures;
-
         // now that we have all the required data, set the vertex buffers and its attribute pointers.
         setupMesh();
     }
@@ -95,8 +85,6 @@ public:
     }
 
 private:
-    // render data 
-    unsigned int VBO, EBO;
 
     // initializes all the buffer objects/arrays
     void setupMesh()
@@ -142,5 +130,14 @@ private:
 		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
         glBindVertexArray(0);
     }
+
+    // render data 
+    unsigned int VBO, EBO;
+
+    // mesh Data
+    vector<Vertex>       vertices;
+    vector<unsigned int> indices;
+    vector<Texture>      textures;
+    unsigned int VAO;
 };
 #endif

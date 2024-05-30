@@ -22,6 +22,8 @@
     <None Include="assimp-vc143-mt.dll" />
     <None Include="skel_anim.fs" />
     <None Include="skel_anim.vs" />
+    <None Include="text_render.fs" />
+    <None Include="text_render.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
@@ -53,6 +55,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -114,12 +117,15 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/../utils/include </AdditionalIncludeDirectories>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/../utils/lib </AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib; opengl32.lib; assimp-vc143-mt.lib; $(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib; glfw3.lib; opengl32.lib; assimp-vc143-mt.lib; $(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)assimp-vc143-mt.dll" "$(OutDir)"</Command>

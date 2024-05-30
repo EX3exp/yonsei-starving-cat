@@ -13,19 +13,19 @@
 struct KeyPosition
 {
 	glm::vec3 position;
-	float timeStamp;
+	GLdouble timeStamp;
 };
 
 struct KeyRotation
 {
 	glm::quat orientation;
-	float timeStamp;
+	GLdouble timeStamp;
 };
 
 struct KeyScale
 {
 	glm::vec3 scale;
-	float timeStamp;
+	GLdouble timeStamp;
 };
 
 class Bone
@@ -42,7 +42,7 @@ public:
 		for (int positionIndex = 0; positionIndex < m_NumPositions; ++positionIndex)
 		{
 			aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
-			float timeStamp = channel->mPositionKeys[positionIndex].mTime;
+			GLdouble timeStamp = channel->mPositionKeys[positionIndex].mTime;
 			KeyPosition data;
 			data.position = AssimpGLMHelpers::GetGLMVec(aiPosition);
 			data.timeStamp = timeStamp;
@@ -53,7 +53,7 @@ public:
 		for (int rotationIndex = 0; rotationIndex < m_NumRotations; ++rotationIndex)
 		{
 			aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
-			float timeStamp = channel->mRotationKeys[rotationIndex].mTime;
+			GLdouble timeStamp = channel->mRotationKeys[rotationIndex].mTime;
 			KeyRotation data;
 			data.orientation = AssimpGLMHelpers::GetGLMQuat(aiOrientation);
 			data.timeStamp = timeStamp;
@@ -64,7 +64,7 @@ public:
 		for (int keyIndex = 0; keyIndex < m_NumScalings; ++keyIndex)
 		{
 			aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
-			float timeStamp = channel->mScalingKeys[keyIndex].mTime;
+			GLdouble timeStamp = channel->mScalingKeys[keyIndex].mTime;
 			KeyScale data;
 			data.scale = AssimpGLMHelpers::GetGLMVec(scale);
 			data.timeStamp = timeStamp;
@@ -72,7 +72,7 @@ public:
 		}
 	}
 	
-	void Update(float animationTime)
+	void Update(GLdouble animationTime)
 	{
 		glm::mat4 translation = InterpolatePosition(animationTime);
 		glm::mat4 rotation = InterpolateRotation(animationTime);
@@ -85,7 +85,7 @@ public:
 	
 
 
-	int GetPositionIndex(float animationTime)
+	int GetPositionIndex(GLdouble animationTime)
 	{
 		for (int index = 0; index < m_NumPositions - 1; ++index)
 		{
@@ -95,7 +95,7 @@ public:
 		assert(0);
 	}
 
-	int GetRotationIndex(float animationTime)
+	int GetRotationIndex(GLdouble animationTime)
 	{
 		for (int index = 0; index < m_NumRotations - 1; ++index)
 		{
@@ -105,7 +105,7 @@ public:
 		assert(0);
 	}
 
-	int GetScaleIndex(float animationTime)
+	int GetScaleIndex(GLdouble animationTime)
 	{
 		for (int index = 0; index < m_NumScalings - 1; ++index)
 		{
@@ -118,16 +118,16 @@ public:
 
 private:
 
-	float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+	float GetScaleFactor(GLdouble lastTimeStamp, GLdouble nextTimeStamp, GLdouble animationTime)
 	{
 		float scaleFactor = 0.0f;
-		float midWayLength = animationTime - lastTimeStamp;
-		float framesDiff = nextTimeStamp - lastTimeStamp;
-		scaleFactor = midWayLength / framesDiff;
+		GLdouble midWayLength = animationTime - lastTimeStamp;
+		GLdouble framesDiff = nextTimeStamp - lastTimeStamp;
+		scaleFactor = static_cast<float>(midWayLength / framesDiff);
 		return scaleFactor;
 	}
 
-	glm::mat4 InterpolatePosition(float animationTime)
+	glm::mat4 InterpolatePosition(GLdouble animationTime)
 	{
 		if (1 == m_NumPositions)
 			return glm::translate(glm::mat4(1.0f), m_Positions[0].position);
@@ -141,7 +141,7 @@ private:
 		return glm::translate(glm::mat4(1.0f), finalPosition);
 	}
 
-	glm::mat4 InterpolateRotation(float animationTime)
+	glm::mat4 InterpolateRotation(GLdouble animationTime)
 	{
 		if (1 == m_NumRotations)
 		{
@@ -160,7 +160,7 @@ private:
 
 	}
 
-	glm::mat4 InterpolateScaling(float animationTime)
+	glm::mat4 InterpolateScaling(GLdouble animationTime)
 	{
 		if (1 == m_NumScalings)
 			return glm::scale(glm::mat4(1.0f), m_Scales[0].scale);

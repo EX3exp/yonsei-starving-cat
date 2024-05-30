@@ -53,8 +53,8 @@ public:
 	}
 
 	
-	inline float GetTicksPerSecond() { return m_TicksPerSecond; }
-	inline float GetDuration() { return m_Duration;}
+	inline GLdouble GetTicksPerSecond() { return m_TicksPerSecond; }
+	inline GLdouble GetDuration() { return m_Duration;}
 	inline const AssimpNodeData& GetRootNode() { return m_RootNode; }
 	inline const std::map<std::string,BoneInfo>& GetBoneIDMap() 
 	{ 
@@ -95,14 +95,14 @@ private:
 		dest.transformation = AssimpGLMHelpers::ConvertMatrixToGLMFormat(src->mTransformation);
 		dest.childrenCount = src->mNumChildren;
 
-		for (int i = 0; i < src->mNumChildren; i++)
+		for (unsigned int i = 0; i < src->mNumChildren; i++)
 		{
 			AssimpNodeData newData;
 			ReadHierarchyData(newData, src->mChildren[i]);
 			dest.children.push_back(newData);
 		}
 	}
-	float m_Duration;
+	GLdouble m_Duration;
 	int m_TicksPerSecond;
 	std::vector<Bone> m_Bones;
 	AssimpNodeData m_RootNode;
