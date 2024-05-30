@@ -3,34 +3,23 @@
   "WorkspaceRootPath": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\USERS\\INTHE\\DOWNLOADS\\YONSEI-STARVING-CAT\\UTILS\\INCLUDE\\LEARNOPENGL\\RENDER_TEXT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|solutionrelative:StarvingCat\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\USERS\\INTHE\\DOWNLOADS\\YONSEI-STARVING-CAT\\UTILS\\INCLUDE\\LEARNOPENGL\\SHADER_M.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\USERS\\INTHE\\DOWNLOADS\\YONSEI-STARVING-CAT\\UTILS\\INCLUDE\\LEARNOPENGL\\MODEL_ANIMATION.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\text_render.fs||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|solutionrelative:StarvingCat\\text_render.fs||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\text_render.vs||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|solutionrelative:StarvingCat\\text_render.vs||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\crt\\src\\vcruntime\\new_scalar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\USERS\\INTHE\\DOWNLOADS\\YONSEI-STARVING-CAT\\UTILS\\INCLUDE\\LEARNOPENGL\\RENDER_TEXT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\model.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\USERS\\INTHE\\DOWNLOADS\\YONSEI-STARVING-CAT\\UTILS\\INCLUDE\\LEARNOPENGL\\SHADER_M.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\USERS\\INTHE\\DOWNLOADS\\YONSEI-STARVING-CAT\\UTILS\\INCLUDE\\LEARNOPENGL\\BONE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\crt\\src\\vcruntime\\new_scalar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|C:\\USERS\\INTHE\\DOWNLOADS\\YONSEI-STARVING-CAT\\UTILS\\INCLUDE\\LEARNOPENGL\\MESH.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -43,17 +32,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\main.cpp",
               "RelativeDocumentMoniker": "StarvingCat\\main.cpp",
-              "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\main.cpp",
-              "RelativeToolTip": "StarvingCat\\main.cpp",
-              "ViewState": "AQIAAO8AAAAAAAAAAAAnwEUBAAAFAAAA",
+              "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\main.cpp*",
+              "RelativeToolTip": "StarvingCat\\main.cpp*",
+              "ViewState": "AQIAAA4BAAAAAAAAAAAAAB4BAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-29T08:57:42.157Z",
               "IsPinned": true,
@@ -61,7 +50,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "new_scalar.cpp",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\crt\\src\\vcruntime\\new_scalar.cpp",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\crt\\src\\vcruntime\\new_scalar.cpp",
@@ -83,20 +72,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "text_render.vs",
-              "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\text_render.vs",
-              "RelativeDocumentMoniker": "StarvingCat\\text_render.vs",
-              "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\text_render.vs",
-              "RelativeToolTip": "StarvingCat\\text_render.vs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-05-30T10:28:58.72Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 4,
               "Title": "bone.h",
               "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\bone.h",
               "RelativeDocumentMoniker": "..\\utils\\include\\learnopengl\\bone.h",
@@ -109,7 +85,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 6,
               "Title": "mesh.h",
               "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\mesh.h",
               "RelativeDocumentMoniker": "..\\utils\\include\\learnopengl\\mesh.h",
@@ -122,7 +98,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 2,
               "Title": "model.h",
               "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\model.h",
               "RelativeDocumentMoniker": "..\\utils\\include\\learnopengl\\model.h",
@@ -135,46 +111,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "model_animation.h",
-              "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\model_animation.h",
-              "RelativeDocumentMoniker": "..\\utils\\include\\learnopengl\\model_animation.h",
-              "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\model_animation.h",
-              "RelativeToolTip": "..\\utils\\include\\learnopengl\\model_animation.h",
-              "ViewState": "AQIAABcAAAAAAAAAAAAAACkAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-30T06:51:24.891Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "render_text.h",
               "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\render_text.h",
               "RelativeDocumentMoniker": "..\\utils\\include\\learnopengl\\render_text.h",
-              "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\render_text.h*",
-              "RelativeToolTip": "..\\utils\\include\\learnopengl\\render_text.h*",
-              "ViewState": "AQIAAFUAAAAAAAAAAAAcwGMAAAAwAAAA",
+              "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\render_text.h",
+              "RelativeToolTip": "..\\utils\\include\\learnopengl\\render_text.h",
+              "ViewState": "AQIAABMAAAAAAAAAAAAAABkAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-05-30T05:10:09.892Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "text_render.fs",
-              "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\text_render.fs",
-              "RelativeDocumentMoniker": "StarvingCat\\text_render.fs",
-              "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\text_render.fs",
-              "RelativeToolTip": "StarvingCat\\text_render.fs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-05-30T10:29:01.616Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "shader_m.h",
               "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\learnopengl\\shader_m.h",
               "RelativeDocumentMoniker": "..\\utils\\include\\learnopengl\\shader_m.h",

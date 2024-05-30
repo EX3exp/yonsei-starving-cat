@@ -24,6 +24,7 @@ struct Character {
     GLuint Advance;      // Offset to advance to next glyph
 };
 
+
 class Text {
 public:
     Text(const std::string& vertexShaderPath, const std::string& fragShaderPath, const std::string& fontPath, const glm::mat4& projection, const std::u32string& text, glm::vec3 &color)
@@ -72,6 +73,7 @@ public:
         shader.setVec3("textColor", color);
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
+
         GLfloat xTemp = x;
         for (auto c : text) {
             if (Characters.find(c) == Characters.end()) {
@@ -152,6 +154,11 @@ public:
         this->scale = scale;
     }
 
+    // 텍스트를 빈 문자열로 바꿉니다.
+    void clearText() {
+        this->text = U"";
+    }
+
 private:
     Character LoadCharacter(FT_Face face, char32_t c) 
     {
@@ -177,7 +184,7 @@ private:
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         Character character = {
