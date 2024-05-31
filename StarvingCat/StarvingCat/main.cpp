@@ -726,7 +726,7 @@ void processInput(GLFWwindow* window)
     }
     else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         if (!catEating) {
-            cout << "cat eat left" << endl;
+            cout << "cat eat right" << endl;
             catMoveFlag = true;
             catMovingLeft = false;
             catEating = true;
