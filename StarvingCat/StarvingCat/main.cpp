@@ -32,13 +32,6 @@ string dataDirStr = "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\data";
 string fontPath = dataDirStr + "\\fonts\\Galmuri14.ttf";
 
 
-enum Scene
-{ // 현재 렌더되는 화면을 구분하는 enum -- 씬 전환 시  
-    cat_init, // 게임 기동 시 맨 처음 화면
-    cat_eat_right, // 고양이가 오른쪽 밥그릇에서 먹음
-    cat_eat_left // 고양이가 왼쪽 밥그릇에서 먹음 
-};
-
 // FUNCTION PROTOTYPES
 GLFWwindow *glAllInit();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -100,8 +93,6 @@ static double catStageTransitionStartTime = 0.0;
 
 string foodRight = "chru"; // 오른쪽 밥그릇에 있는 food, 아무것도 없을 때엔 "none"
 string foodLeft = "none"; // 왼쪽 밥그릇에 있는 food, 아무것도 없을 때엔 "none"
-Scene currentScene = cat_init; // 씬 전환 시 이 변수를 변경
-
 
 static bool catMovingLeft = false; // true일 경우 고양이가 오른쪽으로 움직이는 것으로 가정, 아닐 경우 고양이가 왼쪽으로 움직이는 것으로 가정 
 
