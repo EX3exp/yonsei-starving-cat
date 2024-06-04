@@ -7,6 +7,9 @@
       "RelativeMoniker": "D:0:0:{CBC3C074-2447-406D-9FBD-F02B60142A19}|StarvingCat\\StarvingCat.vcxproj|solutionrelative:StarvingCat\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\foods.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\crt\\src\\vcruntime\\new_scalar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -27,7 +30,7 @@
               "RelativeDocumentMoniker": "StarvingCat\\main.cpp",
               "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat\\main.cpp",
               "RelativeToolTip": "StarvingCat\\main.cpp",
-              "ViewState": "AQIAAIMCAAAAAAAAAAAmwC8CAAAAAAAA",
+              "ViewState": "AQIAADIBAAAAAAAAAAAAADsBAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-29T08:57:42.157Z",
               "IsPinned": true,
@@ -35,7 +38,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "new_scalar.cpp",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\crt\\src\\vcruntime\\new_scalar.cpp",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\crt\\src\\vcruntime\\new_scalar.cpp",
@@ -44,7 +47,8 @@
               "ViewState": "AQIAABUAAAAAAAAAAAAuwCMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-30T09:16:22.634Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Bookmark",
@@ -53,6 +57,19 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "foods.h",
+              "DocumentMoniker": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\foods.h",
+              "RelativeDocumentMoniker": "..\\utils\\include\\foods.h",
+              "ToolTip": "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\utils\\include\\foods.h",
+              "RelativeToolTip": "..\\utils\\include\\foods.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAC0AAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-06-04T05:27:06.083Z",
+              "EditorCaption": ""
             }
           ]
         }

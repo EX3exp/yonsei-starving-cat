@@ -70,7 +70,7 @@ private:
             return;
         }
         // retrieve the directory path of the filepath
-        directory = path.substr(0, path.find_last_of('\\'));
+        directory = path.substr(0, path.find_last_of('/'));
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene);
@@ -206,7 +206,7 @@ private:
 	unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false)
 	{
 		string filename = string(path);
-		filename = directory + '\\' + filename;
+		filename = directory + '/' + filename;
 
 		unsigned int textureID;
 		glGenTextures(1, &textureID);
