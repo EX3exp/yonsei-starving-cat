@@ -1,10 +1,9 @@
-// windows°¡ ¾Æ´Ò °æ¿ì ÆÄÀÏ°æ·Î ±¸ºĞ ¹®ÀÚ¿­À» "\\"¿¡¼­ '/'·Î ¹Ù²ã¾ß µ¹¾Æ°©´Ï´Ù -- learnopengl, utils ³»ºÎ °ü·Ã Çì´õµµ ÀüºÎ ¼öÁ¤ÇØ¾ß ÇÔ 
-// (main.cpp ÀÌ¿Ü¿£ µüÈ÷ ¼öÁ¤ÇÏÁø ¾ÊÀ¸¼Åµµ µÇ°í ±³¼ö´Ô²²¼­ ¿Ã·Á ÁÖ½Å Çì´õÆÄÀÏµé ±×´ë·Î »ç¿ëÇÏ½Ã¸é µË´Ï´Ù)
+ï»¿// 24-06-04 íŒŒì¼ ê²½ë¡œ ê´€ë ¨ ì´ìŠˆ ìˆ˜ì • (ìš´ì˜ì²´ì œì— ìƒê´€ì—†ì´ ê·¸ëƒ¥ ëŒë¦¬ì‹œë©´ ë©ë‹ˆë‹¤....)
 // 
-// <µğ¹ö±× Æú´õ ³»¿¡ ¸®¼Ò½º ÆÄÀÏÀ» ºÙ¿©³Ö¾î¾ß ÇÒ °æ¿ì>:
-// (¼öµ¿À¸·Î º¹ºÙÇÏÁö ¸¶½Ã°í)
-// ÇÁ·ÎÁ§Æ® ¼Ó¼º >> ºôµå ÈÄ ÀÌº¥Æ®
-// ¸í·ÉÁÙ¿¡ `copy "$(ProjectDir)<Ãß°¡ÇÒ ÆÄÀÏ>" "$(OutDir)" ` À» Ãß°¡ÇØ ÁÖ¼¼¿ä
+// <ë””ë²„ê·¸ í´ë” ë‚´ì— ë¦¬ì†ŒìŠ¤ íŒŒì¼ì„ ë¶™ì—¬ë„£ì–´ì•¼ í•  ê²½ìš°>:
+// (ìˆ˜ë™ìœ¼ë¡œ ë³µë¶™í•˜ì§€ ë§ˆì‹œê³ )
+// í”„ë¡œì íŠ¸ ì†ì„± >> ë¹Œë“œ í›„ ì´ë²¤íŠ¸
+// ëª…ë ¹ì¤„ì— `copy "$(ProjectDir)<ì¶”ê°€í•  íŒŒì¼>" "$(OutDir)" ` ì„ ì¶”ê°€í•´ ì£¼ì„¸ìš”
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -27,9 +26,9 @@
 
 glm::vec3 darkblue = glm::vec3(0.06, 0.08, 0.71);
 // Source and Data directories
-string sourceDirStr = "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\StarvingCat\\StarvingCat";
-string dataDirStr = "C:\\Users\\inthe\\Downloads\\yonsei-starving-cat\\data";
-string fontPath = dataDirStr + "\\fonts\\Galmuri14.ttf";
+string sourceDirStr = "C:/Users/inthe/Downloads/yonsei-starving-cat/StarvingCat/StarvingCat";
+string dataDirStr = "C:/Users/inthe/Downloads/yonsei-starving-cat/data";
+string fontPath = dataDirStr + "/fonts/Galmuri14.ttf";
 
 
 // FUNCTION PROTOTYPES
@@ -42,7 +41,7 @@ void goToNextStage();
 void goToFirstStage();
 
 // GLOBAL VARIABLES
-const double MAX_FRAMERATE_LIMIT = 1.0 / 60.0; // ÇöÀç ÇÁ·¹ÀÓ·¹ÀÌÆ® -- ±âº»°ªÀº 60ÇÁ·¹ÀÓ
+const double MAX_FRAMERATE_LIMIT = 1.0 / 60.0; // í˜„ì¬ í”„ë ˆì„ë ˆì´íŠ¸ -- ê¸°ë³¸ê°’ì€ 60í”„ë ˆì„
 
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
@@ -53,19 +52,19 @@ const int MIN_STAGE = 0;
 
 // share variables
 static int stage; // stage, 0~9
-static float catSize; // stage°¡ ´Ã ¶§¸¶´Ù Áõ°¡ TODO cat scale Àû¿ë
+static float catSize; // stageê°€ ëŠ˜ ë•Œë§ˆë‹¤ ì¦ê°€ TODO cat scale ì ìš©
 
 // starg flags
-static bool catMoveFlag = false; // true¸é °í¾çÀÌÀÇ À§Ä¡¸¦ catMoveAmt¸¸Å­ ¿òÁ÷ÀÓ 
-static bool catStopAndEatFlag = false; // trueÀÏ °æ¿ì °í¾çÀÌ°¡ ¸ØÃç¼­ ¸Ô°í À½½Ä Á¾·ù¿¡ µû¶ó ¹İÀÀ
-static bool catShowResultFlag = false; // true¸é °í¾çÀÌÀÇ ¹İÀÀ º¸¿©ÁÜ
-static bool catStageTransitionFlag = false; // true¸é ´ÙÀ½ ½ºÅ×ÀÌÁö·Î ÀÌµ¿
-    static bool catMoveNext = false; // true¸é ´ÙÀ½ ½ºÅ×ÀÌÁö·Î ÀÌµ¿ÇÏ°Å³ª °ÔÀÓ Á¾·á, false¸é Ã¹ ½ºÅ×ÀÌÁö·Î ÀÌµ¿
-static bool gameEndingFlag = false; // trueÀÏ °æ¿ì °ÔÀÓ Á¾·á ¿¬Ãâ
+static bool catMoveFlag = false; // trueë©´ ê³ ì–‘ì´ì˜ ìœ„ì¹˜ë¥¼ catMoveAmtë§Œí¼ ì›€ì§ì„ 
+static bool catStopAndEatFlag = false; // trueì¼ ê²½ìš° ê³ ì–‘ì´ê°€ ë©ˆì¶°ì„œ ë¨¹ê³  ìŒì‹ ì¢…ë¥˜ì— ë”°ë¼ ë°˜ì‘
+static bool catShowResultFlag = false; // trueë©´ ê³ ì–‘ì´ì˜ ë°˜ì‘ ë³´ì—¬ì¤Œ
+static bool catStageTransitionFlag = false; // trueë©´ ë‹¤ìŒ ìŠ¤í…Œì´ì§€ë¡œ ì´ë™
+    static bool catMoveNext = false; // trueë©´ ë‹¤ìŒ ìŠ¤í…Œì´ì§€ë¡œ ì´ë™í•˜ê±°ë‚˜ ê²Œì„ ì¢…ë£Œ, falseë©´ ì²« ìŠ¤í…Œì´ì§€ë¡œ ì´ë™
+static bool gameEndingFlag = false; // trueì¼ ê²½ìš° ê²Œì„ ì¢…ë£Œ ì—°ì¶œ
 
 
 // stop flags
-static bool catMoveStopFlag = false; // true¸é °í¾çÀÌ À§Ä¡°¡ ´Ù ÀÌµ¿Çß´Ù°í °£ÁÖ
+static bool catMoveStopFlag = false; // trueë©´ ê³ ì–‘ì´ ìœ„ì¹˜ê°€ ë‹¤ ì´ë™í–ˆë‹¤ê³  ê°„ì£¼
 static bool catStopAndEatStopFlag = false;
 static bool catShowResultStopFlag = false;
 static bool catStageTransitionStopFlag = false;
@@ -74,27 +73,27 @@ static bool catStageTransitionStopFlag = false;
 // processing
 static bool catEating = false; // true while whole cat motion -- blocks left+right input when false
 
-static bool catMoving = false; // trueÀÏ °æ¿ì °í¾çÀÌ°¡ ¿òÁ÷ÀÌ°í ÀÖÀ½
-static bool catStopAndEating = false; // trueÀÏ °æ¿ì °í¾çÀÌ°¡ ¸Ô°í ÀÖÀ½
-static bool catShowingResult = false; // trueÀÏ °æ¿ì °í¾çÀÌ°¡ ¹İÀÀ Ç¥½Ã
-static bool catStageTransitioning = false; // trueÀÏ °æ¿ì ½ºÅ×ÀÌÁö ÀüÈ¯ Áß
+static bool catMoving = false; // trueì¼ ê²½ìš° ê³ ì–‘ì´ê°€ ì›€ì§ì´ê³  ìˆìŒ
+static bool catStopAndEating = false; // trueì¼ ê²½ìš° ê³ ì–‘ì´ê°€ ë¨¹ê³  ìˆìŒ
+static bool catShowingResult = false; // trueì¼ ê²½ìš° ê³ ì–‘ì´ê°€ ë°˜ì‘ í‘œì‹œ
+static bool catStageTransitioning = false; // trueì¼ ê²½ìš° ìŠ¤í…Œì´ì§€ ì „í™˜ ì¤‘
 
 // time temp
-static double catMovedTime = 0.0; // [ÃÊ±â ÀÌµ¿] °í¾çÀÌ°¡ ¸¶Áö¸·À¸·Î ¿òÁ÷ÀÎ ½Ã°£
-static double catStopAndEatTime = 0.0; // [ÃÊ±â ÀÌµ¿ ÈÄ À½½Ä ¸ÔÀ½] °í¾çÀÌ À½½Ä¸Ô´Â ¸ğ¼Ç ½Ã°£
-static double catShowResultTime = 0.0; // [ÃÊ±â ÀÌµ¿ ÈÄ À½½Ä ¸Ô°í ¹İÀÀ] °í¾çÀÌ ¹İÀÀ ¸ğ¼Ç ½Ã°£
+static double catMovedTime = 0.0; // [ì´ˆê¸° ì´ë™] ê³ ì–‘ì´ê°€ ë§ˆì§€ë§‰ìœ¼ë¡œ ì›€ì§ì¸ ì‹œê°„
+static double catStopAndEatTime = 0.0; // [ì´ˆê¸° ì´ë™ í›„ ìŒì‹ ë¨¹ìŒ] ê³ ì–‘ì´ ìŒì‹ë¨¹ëŠ” ëª¨ì…˜ ì‹œê°„
+static double catShowResultTime = 0.0; // [ì´ˆê¸° ì´ë™ í›„ ìŒì‹ ë¨¹ê³  ë°˜ì‘] ê³ ì–‘ì´ ë°˜ì‘ ëª¨ì…˜ ì‹œê°„
 static double catStageTransitionTime = 0.0;
 
 // start time
-static double catMoveStartTime = 0.0; // °í¾çÀÌ°¡ ¿òÁ÷ÀÌ±â ½ÃÀÛÇÑ ½Ã°£
-static double catStopAndEatStartTime = 0.0; // °í¾çÀÌ°¡ ¸¶Áö¸·À¸·Î À½½Ä¸Ô´Â ¿òÁ÷ÀÓÀ» ÇÑ ½Ã°£
-static double catShowResultStartTime = 0.0; // °í¾çÀÌ°¡ ¸¶Áö¸·À¸·Î ¹İÀÀ ¿òÁ÷ÀÓÀ» º¸ÀÎ ½Ã°£
+static double catMoveStartTime = 0.0; // ê³ ì–‘ì´ê°€ ì›€ì§ì´ê¸° ì‹œì‘í•œ ì‹œê°„
+static double catStopAndEatStartTime = 0.0; // ê³ ì–‘ì´ê°€ ë§ˆì§€ë§‰ìœ¼ë¡œ ìŒì‹ë¨¹ëŠ” ì›€ì§ì„ì„ í•œ ì‹œê°„
+static double catShowResultStartTime = 0.0; // ê³ ì–‘ì´ê°€ ë§ˆì§€ë§‰ìœ¼ë¡œ ë°˜ì‘ ì›€ì§ì„ì„ ë³´ì¸ ì‹œê°„
 static double catStageTransitionStartTime = 0.0;
 
-string foodRight = "chru"; // ¿À¸¥ÂÊ ¹ä±×¸©¿¡ ÀÖ´Â food, ¾Æ¹«°Íµµ ¾øÀ» ¶§¿£ "none"
-string foodLeft = "none"; // ¿ŞÂÊ ¹ä±×¸©¿¡ ÀÖ´Â food, ¾Æ¹«°Íµµ ¾øÀ» ¶§¿£ "none"
+string foodRight = "chru"; // ì˜¤ë¥¸ìª½ ë°¥ê·¸ë¦‡ì— ìˆëŠ” food, ì•„ë¬´ê²ƒë„ ì—†ì„ ë•Œì—” "none"
+string foodLeft = "none"; // ì™¼ìª½ ë°¥ê·¸ë¦‡ì— ìˆëŠ” food, ì•„ë¬´ê²ƒë„ ì—†ì„ ë•Œì—” "none"
 
-static bool catMovingLeft = false; // trueÀÏ °æ¿ì °í¾çÀÌ°¡ ¿À¸¥ÂÊÀ¸·Î ¿òÁ÷ÀÌ´Â °ÍÀ¸·Î °¡Á¤, ¾Æ´Ò °æ¿ì °í¾çÀÌ°¡ ¿ŞÂÊÀ¸·Î ¿òÁ÷ÀÌ´Â °ÍÀ¸·Î °¡Á¤ 
+static bool catMovingLeft = false; // trueì¼ ê²½ìš° ê³ ì–‘ì´ê°€ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì›€ì§ì´ëŠ” ê²ƒìœ¼ë¡œ ê°€ì •, ì•„ë‹ ê²½ìš° ê³ ì–‘ì´ê°€ ì™¼ìª½ìœ¼ë¡œ ì›€ì§ì´ëŠ” ê²ƒìœ¼ë¡œ ê°€ì • 
 
 
 GLFWwindow *mainWindow = NULL;
@@ -111,14 +110,14 @@ GLdouble lastUpdateTime = 0.0;
 GLdouble lastFrameTime = 0.0;
 
 glm::mat4 textProjection = glm::ortho(0.0f, static_cast<GLfloat>(SCR_WIDTH), 0.0f, static_cast<GLfloat>(SCR_HEIGHT));
-// Á¤¼ö => À¯´ÏÄÚµå ¹®ÀÚ¿­·Î ¹Ù²Ù´Â ÇÔ¼ö
+// ì •ìˆ˜ => ìœ ë‹ˆì½”ë“œ ë¬¸ìì—´ë¡œ ë°”ê¾¸ëŠ” í•¨ìˆ˜
 std::u32string intToChar32(const int i) 
 {
     auto s = std::to_string(i);
     return { s.begin(), s.end() };
 }
 
-// 3d ¸ğµ¨ ¿ÀºêÁ§Æ®µéÀº ¸ğµÎ ÀÌ Å¬·¡½º¸¦ »ó¼Ó¹Ş¾Æ¼­ »ç¿ë - ¾Ö´Ï¸ŞÀÌÆÃ Àû¿ëµÇ´Â ¿ÀºêÁ§Æ®ÀÇ °æ¿ì AnimatedObj3D »ó¼ÓÇØ¾ß ÇÔ
+// 3d ëª¨ë¸ ì˜¤ë¸Œì íŠ¸ë“¤ì€ ëª¨ë‘ ì´ í´ë˜ìŠ¤ë¥¼ ìƒì†ë°›ì•„ì„œ ì‚¬ìš© - ì• ë‹ˆë©”ì´íŒ… ì ìš©ë˜ëŠ” ì˜¤ë¸Œì íŠ¸ì˜ ê²½ìš° AnimatedObj3D ìƒì†í•´ì•¼ í•¨
 class Obj3D
 { 
 public:
@@ -240,7 +239,7 @@ protected:
     glm::mat4 viewMatrix = camera.GetViewMatrix();
     glm::mat4 modelMatrix = glm::mat4(1.0f);
     glm::mat4 defaultTransformMatrix = glm::mat4(1.0f);
-    bool isPlaying = true; // ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ıÇÏ°í ÀÖÀ» °æ¿ì¿¡¸¸ true
+    bool isPlaying = true; // ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒí•˜ê³  ìˆì„ ê²½ìš°ì—ë§Œ true
 
 
     glm::mat4 lastTranslateMatrix = glm::mat4(1.0f); // translate
@@ -249,7 +248,7 @@ protected:
     
 };
 
-// ¾Ö´Ï¸ŞÀÌÆÃµÇ´Â 3d ¸ğµ¨ ¿ÀºêÁ§Æ®µéÀº ¸ğµÎ ÀÌ Å¬·¡½º¸¦ »ó¼Ó¹Ş¾Æ¼­ »ç¿ë
+// ì• ë‹ˆë©”ì´íŒ…ë˜ëŠ” 3d ëª¨ë¸ ì˜¤ë¸Œì íŠ¸ë“¤ì€ ëª¨ë‘ ì´ í´ë˜ìŠ¤ë¥¼ ìƒì†ë°›ì•„ì„œ ì‚¬ìš©
 class AnimatedObj3D : public Obj3D
 { 
 public:
@@ -279,23 +278,23 @@ public:
         }
     }
 
-    // ¿òÁ÷ÀÓ ¸®¼ÂÇÏ°í ÃÊ±â Æ÷Áî·Î µ¹¾Æ°¨
+    // ì›€ì§ì„ ë¦¬ì…‹í•˜ê³  ì´ˆê¸° í¬ì¦ˆë¡œ ëŒì•„ê°
     void reset() 
     {
         transformsMatrixes = originalTransformsMatrixes;
     }
 
-    // ¸ğ¼Ç Àç»ı
+    // ëª¨ì…˜ ì¬ìƒ
     void play() {
         isPlaying = true;
     }
 
-    // ¸ğ¼Ç ÀÏ½ÃÁ¤Áö
+    // ëª¨ì…˜ ì¼ì‹œì •ì§€
     void pause() {
         isPlaying = false;
     }
 
-    // ¸ğ¼Ç Á¤Áö -- ÃÊ±â Æ÷Áî·Î µ¹¾Æ°¨
+    // ëª¨ì…˜ ì •ì§€ -- ì´ˆê¸° í¬ì¦ˆë¡œ ëŒì•„ê°
     void stop() {
         isPlaying = false;
         reset();
@@ -324,11 +323,11 @@ protected:
     Animation anim{ modelPath, &model };
     Animator animator{ &anim };
 
-    std::vector<glm::mat4> originalTransformsMatrixes = animator.GetFinalBoneMatrices(); // ¸ğ¼Ç reset ¿ëµµ -- ÃÖÃÊÀÇ transforms¸¦ ÀúÀåÇÔ
-    std::vector<glm::mat4> transformsMatrixes = animator.GetFinalBoneMatrices(); // ¾Ö´Ï¸ŞÀÌ¼Ç ¼öÇà ¿ëµµ
+    std::vector<glm::mat4> originalTransformsMatrixes = animator.GetFinalBoneMatrices(); // ëª¨ì…˜ reset ìš©ë„ -- ìµœì´ˆì˜ transformsë¥¼ ì €ì¥í•¨
+    std::vector<glm::mat4> transformsMatrixes = animator.GetFinalBoneMatrices(); // ì• ë‹ˆë©”ì´ì…˜ ìˆ˜í–‰ ìš©ë„
 };
 
-// °í¾çÀÌ
+// ê³ ì–‘ì´
 class Cat : public AnimatedObj3D
 { 
 public:
@@ -363,17 +362,17 @@ public:
         cout << "** changed motion - eat";
         changeMotion(eatMotionPath);
     }
-    // ¿ŞÂÊÀÇ À½½ÄÀ» ¸ÔÀ» °æ¿ì isMovingLeft = true, ¿À¸¥ÂÊ À½½ÄÀ» ¸ÔÀ» °æ¿ì isMovingLeft = false
+    // ì™¼ìª½ì˜ ìŒì‹ì„ ë¨¹ì„ ê²½ìš° isMovingLeft = true, ì˜¤ë¥¸ìª½ ìŒì‹ì„ ë¨¹ì„ ê²½ìš° isMovingLeft = false
     bool result(const string food) 
     {
         cout << "** changed motion - show result";
-        if (!checkCanEat(food)) { // ¸ÔÀ» ¼ö ¾ø´Â °É ¸ÔÀ½
+        if (!checkCanEat(food)) { // ë¨¹ì„ ìˆ˜ ì—†ëŠ” ê±¸ ë¨¹ìŒ
             cout << "eated: " << food << " -- cat will die" << endl;
             changeMotion(dieMotionPath);
             // TODO
             return false;
         }
-        else { // ¸ÔÀ» ¼ö ÀÖ´Â °É ¸ÔÀ½
+        else { // ë¨¹ì„ ìˆ˜ ìˆëŠ” ê±¸ ë¨¹ìŒ
             cout << "eated: " << food << " -- happy cat" << endl;
             changeMotion(joyMotionPath);
             // TODO
@@ -387,7 +386,7 @@ public:
         resetTransform();
     }
 
-    void resetToRetry() { // stage 1·Î ÀÌµ¿ÇßÀ» ¶§ È£Ãâ 
+    void resetToRetry() { // stage 1ë¡œ ì´ë™í–ˆì„ ë•Œ í˜¸ì¶œ 
         defaultTransformMatrix = initialTransformMatrix;
         resetTransform();
     }
@@ -398,8 +397,8 @@ private:
         return (foods.find(food) != foods.end() && foods[food] != 0 ? true : false);
     }
 
-    // TODO foods ÀÛ¼º 
-    unordered_map<string, int> foods; // <À½½ÄÀÌ¸§, ¸ÔÀ» ¼ö ÀÖÀ½> - ¿¹: <"fish", 1> -- 0 ÀÌ»óÀº ÀüºÎ ¸ÔÀ» ¼ö ÀÖÀ½ 
+    // TODO foods ì‘ì„± 
+    unordered_map<string, int> foods; // <ìŒì‹ì´ë¦„, ë¨¹ì„ ìˆ˜ ìˆìŒ> - ì˜ˆ: <"fish", 1> -- 0 ì´ìƒì€ ì „ë¶€ ë¨¹ì„ ìˆ˜ ìˆìŒ 
     float defaultScale;
     
     float defaultXtranslation;
@@ -425,32 +424,32 @@ private:
 Cat* cat;
 Text* mainText;
 Text* messageText;
-// TODO ¹ä±×¸©°ú ÃÊ¿ø
+// TODO ë°¥ê·¸ë¦‡ê³¼ ì´ˆì›
 
 int main()
 {
     mainWindow = glAllInit();
 
 
-    GLfloat catMoveAmt; // ¿ŞÂÊ ¹ä±×¸© ¸ÔÀ» ¶§¿£ °¨¼Ò, ¿À¸¥ÂÊ ¹ä±×¸© ¸ÔÀ» ¶§¿£ Áõ°¡
+    GLfloat catMoveAmt; // ì™¼ìª½ ë°¥ê·¸ë¦‡ ë¨¹ì„ ë•Œì—” ê°ì†Œ, ì˜¤ë¥¸ìª½ ë°¥ê·¸ë¦‡ ë¨¹ì„ ë•Œì—” ì¦ê°€
     // load models
     // -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
-    string catModelPath = dataDirStr + "\\vampire\\dae\\dancing_vampire.dae"; // °í¾çÀÌ ¸ğµ¨ °æ·Î -- ¸ğµ¨, ±âº» ¸ğ¼Ç¿ë
-    string catWalkPath = dataDirStr + "\\vampire\\dae2\\dancing_vampire.dae"; // °È´Â °í¾çÀÌ ¸ğµ¨ °æ·Î -- ¸ğ¼Ç¿ë
-    string catEatPath = dataDirStr + "\\vampire\\dae2\\dancing_vampire.dae"; // ¸Ô´Â °í¾çÀÌ ¸ğµ¨ °æ·Î -- ¸ğ¼Ç¿ë
-    string catJoyPath = dataDirStr + "\\vampire\\dae\\dancing_vampire.dae"; // Áñ°Å¿î °í¾çÀÌ ¸ğµ¨ °æ·Î -- ¸ğ¼Ç¿ë
-    string catDiePath = dataDirStr + "\\vampire\\dae2\\dancing_vampire.dae"; // À½½Ä Àß¸ø¸ÔÀº °í¾çÀÌ ¸ğµ¨ °æ·Î -- ¸ğ¼Ç¿ë
+    string catModelPath = dataDirStr + "/vampire/dae/dancing_vampire.dae"; // ê³ ì–‘ì´ ëª¨ë¸ ê²½ë¡œ -- ëª¨ë¸, ê¸°ë³¸ ëª¨ì…˜ìš©
+    string catWalkPath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // ê±·ëŠ” ê³ ì–‘ì´ ëª¨ë¸ ê²½ë¡œ -- ëª¨ì…˜ìš©
+    string catEatPath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // ë¨¹ëŠ” ê³ ì–‘ì´ ëª¨ë¸ ê²½ë¡œ -- ëª¨ì…˜ìš©
+    string catJoyPath = dataDirStr + "/vampire/dae/dancing_vampire.dae"; // ì¦ê±°ìš´ ê³ ì–‘ì´ ëª¨ë¸ ê²½ë¡œ -- ëª¨ì…˜ìš©
+    string catDiePath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // ìŒì‹ ì˜ëª»ë¨¹ì€ ê³ ì–‘ì´ ëª¨ë¸ ê²½ë¡œ -- ëª¨ì…˜ìš©
 
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
 
     // build and compile shaders
     // -------------------------
-    string vs = sourceDirStr + "\\skel_anim.vs"; // vertex shader
-    string fs = sourceDirStr + "\\skel_anim.fs"; // fragment shader
+    string vs = sourceDirStr + "/skel_anim.vs"; // vertex shader
+    string fs = sourceDirStr + "/skel_anim.fs"; // fragment shader
 
-    string vsText = sourceDirStr + "\\text_render.vs"; // text¿ë vertex shader
-    string fsText = sourceDirStr + "\\text_render.fs"; // text¿ë fragment shader
+    string vsText = sourceDirStr + "/text_render.vs"; // textìš© vertex shader
+    string fsText = sourceDirStr + "/text_render.fs"; // textìš© fragment shader
 
     cat = new Cat(catModelPath, catWalkPath, catEatPath, catJoyPath, catDiePath, // models path
         vs, fs, // shaders
@@ -483,13 +482,13 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-        // ÇÁ·¹ÀÓ¿¡ ¸ÂÃç¼­ ÀÎÇ² ¹Ş°í °ÔÀÓ ÁøÇà 
+        // í”„ë ˆì„ì— ë§ì¶°ì„œ ì¸í’‹ ë°›ê³  ê²Œì„ ì§„í–‰ 
         if ((now - lastFrameTime) >= MAX_FRAMERATE_LIMIT)
         {
             float factor = (catMovingLeft ? -1.f : 1.f);
             // ----------
-            // °í¾çÀÌ ¸ğ¼Ç - 1. ¹ä±×¸© À§Ä¡±îÁö ¿òÁ÷ÀÓ
-            if (catMoveFlag) { // °í¾çÀÌ ¿òÁ÷ÀÓ ÁØºñ
+            // ê³ ì–‘ì´ ëª¨ì…˜ - 1. ë°¥ê·¸ë¦‡ ìœ„ì¹˜ê¹Œì§€ ì›€ì§ì„
+            if (catMoveFlag) { // ê³ ì–‘ì´ ì›€ì§ì„ ì¤€ë¹„
                 cout << "   cat start Move" << endl;
                 // starts move at next frame
                 catMoveStartTime = now;
@@ -512,7 +511,7 @@ int main()
 
                 cat->rotate(factor * 90.f, glm::vec3(0.f, 1.f, 0.f));
             }
-            if (catMoving) { // °í¾çÀÌ ¿òÁ÷ÀÓ
+            if (catMoving) { // ê³ ì–‘ì´ ì›€ì§ì„
                 cout << " - ";
                 catMovedTime = now - catMoveStartTime;
                 catMoveAmt = 0.015 * factor * sin(catMovedTime / 2.f * PI);
@@ -524,7 +523,7 @@ int main()
                     catMoving = false;
                 }
             }
-            if (catMoveStopFlag) { // °í¾çÀÌ ¸ØÃã ÁØºñ
+            if (catMoveStopFlag) { // ê³ ì–‘ì´ ë©ˆì¶¤ ì¤€ë¹„
                 cout << endl << "   cat Stopped" << endl;
                 catMoveStopFlag = false;
                 catStopAndEatFlag = true;
@@ -532,8 +531,8 @@ int main()
             }
 
             // ---------------- 
-            // °í¾çÀÌ ¸ğ¼Ç - 2. ¹ä ¸ÔÀ½ 
-            if (catStopAndEatFlag) { // °í¾çÀÌ ¸ÔÀ» ÁØºñ
+            // ê³ ì–‘ì´ ëª¨ì…˜ - 2. ë°¥ ë¨¹ìŒ 
+            if (catStopAndEatFlag) { // ê³ ì–‘ì´ ë¨¹ì„ ì¤€ë¹„
                 cout << "   cat starts Eating" << endl;
                 // starts eat at next frame
                 catStopAndEatStartTime = now;
@@ -541,7 +540,7 @@ int main()
                 catStopAndEating = true;
                 catStopAndEatStopFlag = false;
             }
-            if (catStopAndEating) { // °í¾çÀÌ ¸ÔÀ½
+            if (catStopAndEating) { // ê³ ì–‘ì´ ë¨¹ìŒ
                 cout << " - ";
 
                 if (now - catStopAndEatStartTime >= 2) {
@@ -551,7 +550,7 @@ int main()
                     catStopAndEating = false;
                 }
             }
-            if (catStopAndEatStopFlag) { // °í¾çÀÌ ¸Ô´Â°Å ¸ØÃã ÁØºñ
+            if (catStopAndEatStopFlag) { // ê³ ì–‘ì´ ë¨¹ëŠ”ê±° ë©ˆì¶¤ ì¤€ë¹„
                 cout << endl << "   cat Stopped Eating" << endl;
                 catStopAndEatStopFlag = false;
                 catShowResultFlag = true;
@@ -559,8 +558,8 @@ int main()
             }
 
             // ---------------- 
-            // °í¾çÀÌ ¸ğ¼Ç - 3. ¹İÀÀ Ç¥½Ã 
-            if (catShowResultFlag) { // °í¾çÀÌ ¹İÀÀ ÁØºñ
+            // ê³ ì–‘ì´ ëª¨ì…˜ - 3. ë°˜ì‘ í‘œì‹œ 
+            if (catShowResultFlag) { // ê³ ì–‘ì´ ë°˜ì‘ ì¤€ë¹„
                 cout << "   cat starts Eating" << endl;
                 // starts eat at next frame
                 catShowResultStartTime = now;
@@ -569,7 +568,7 @@ int main()
                 catShowResultFlag = false;
                 cat->rotate(factor * -1.f * 90.f, glm::vec3(0.f, 1.f, 0.f));
             }
-            if (catShowingResult) { // °í¾çÀÌ ¹İÀÀ
+            if (catShowingResult) { // ê³ ì–‘ì´ ë°˜ì‘
                 cout << " - ";
 
                 if (now - catMoveStartTime >= 3) {
@@ -579,15 +578,15 @@ int main()
                     catShowingResult = false;
                 }
             }
-            if (catShowResultStopFlag) { // °í¾çÀÌ ¹İÀÀ ¸ØÃã ÁØºñ
+            if (catShowResultStopFlag) { // ê³ ì–‘ì´ ë°˜ì‘ ë©ˆì¶¤ ì¤€ë¹„
                 cout << endl << "   cat stopped" << endl;
                 catShowResultStopFlag = false;
                 catStageTransitionFlag = true;
             }
 
             // ---------------- 
-            // 4. ÀüÈ¯  
-            if (catStageTransitionFlag) { // ½ºÅ×ÀÌÁö ÀüÈ¯ ÁØºñ 
+            // 4. ì „í™˜  
+            if (catStageTransitionFlag) { // ìŠ¤í…Œì´ì§€ ì „í™˜ ì¤€ë¹„ 
                 cout << "   going to next stage" << endl;
                 // starts eat at next frame
                 catStageTransitionStartTime = now;
@@ -595,10 +594,10 @@ int main()
                 catStageTransitioning = true;
                 catStageTransitionStopFlag = false;
             }
-            if (catStageTransitioning) { // ½ºÅ×ÀÌÁö ÀüÈ¯
+            if (catStageTransitioning) { // ìŠ¤í…Œì´ì§€ ì „í™˜
                 cout << " - ";
                 if (catMoveNext) {
-                    messageText->setText(U"ÈÇ¸¢ÇØ¿ä!"); // TODO
+                    messageText->setText(U"í›Œë¥­í•´ìš”!"); // TODO
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
                         // stops move at next frame
@@ -607,7 +606,7 @@ int main()
                     }
                 }
                 else {
-                    messageText->setText(U"ÃÊÄİ¸´Àº ¸ÔÀÌ¸é ¾È µË´Ï´Ù ¾îÂ¼°í"); // TODO
+                    messageText->setText(U"ì´ˆì½œë¦¿ì€ ë¨¹ì´ë©´ ì•ˆ ë©ë‹ˆë‹¤ ì–´ì©Œê³ "); // TODO
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
                         // stops move at next frame
@@ -617,7 +616,7 @@ int main()
                 }
 
             }
-            if (catStageTransitionStopFlag) { // ¸ØÃã ÁØºñ
+            if (catStageTransitionStopFlag) { // ë©ˆì¶¤ ì¤€ë¹„
                 cout << endl << "   go to next" << endl;
                 catStageTransitionStopFlag = false;
                 messageText->clearText();
@@ -631,7 +630,7 @@ int main()
                     goToFirstStage();
                 }
 
-                catEating = false; // ÀÔ·Â Â÷´Ü Ç®±â
+                catEating = false; // ì…ë ¥ ì°¨ë‹¨ í’€ê¸°
 
             }
                 // End of the Motions
@@ -647,7 +646,7 @@ int main()
             cat->draw();
             mainText->draw();
             messageText->draw();
-            // TODO ÃÊ¿ø, ¹ä±×¸©, ¹ä ±×¸®±â, Lighting
+            // TODO ì´ˆì›, ë°¥ê·¸ë¦‡, ë°¥ ê·¸ë¦¬ê¸°, Lighting
 
             lastUpdateTime = now;
             glfwSwapBuffers(mainWindow);
@@ -769,8 +768,8 @@ void goToNextStage()
     cout << "Go to next Stage -- " << stage << endl;
 
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
-    // TODO -- À½½Ä ¹èÁ¤
-    // TODO -- ½ºÅ×ÀÌÁö »óÇÑ µµ´ŞÇÏ¸é °ÔÀÓ Á¾·á
+    // TODO -- ìŒì‹ ë°°ì •
+    // TODO -- ìŠ¤í…Œì´ì§€ ìƒí•œ ë„ë‹¬í•˜ë©´ ê²Œì„ ì¢…ë£Œ
 }
 void goToFirstStage()
 {
@@ -778,5 +777,5 @@ void goToFirstStage()
     cout << "Go to 1st Stage -- " << stage << endl;
 
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
-    // TODO -- À½½Ä ¹èÁ¤
+    // TODO -- ìŒì‹ ë°°ì •
 }
