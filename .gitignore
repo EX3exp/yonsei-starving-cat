@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -36,8 +35,6 @@
 /StarvingCat/StarvingCat/x64
 /StarvingCat/StarvingCat/x64/Debug
 *.pdb
-/StarvingCat/.vs/StarvingCat/v17
-/StarvingCat/.vs
 /StarvingCat/.vs/StarvingCat/v17
 StarvingCat/.vs/StarvingCat/v17/.suo
 StarvingCat/.vs/StarvingCat/v17/Browse.VC.db
