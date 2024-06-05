@@ -14,6 +14,7 @@
 
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
+#include <learnopengl/light.h>
 #include <learnopengl/animator.h>
 #include <learnopengl/model_animation.h>
 #include <iostream>
@@ -95,6 +96,7 @@ string foodLeft = "none"; // 왼쪽 밥그릇에 있는 food, 아무것도 없�
 
 static bool catMovingLeft = false; // true일 경우 고양이가 오른쪽으로 움직이는 것으로 가정, 아닐 경우 고양이가 왼쪽으로 움직이는 것으로 가정 
 
+glm::vec3 dirLightDirection = glm::vec3(-0.2f, -1.0f, -0.3f);
 
 GLFWwindow *mainWindow = NULL;
 
@@ -103,6 +105,9 @@ Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+
+// light
+Light* light = new Light();
 
 // timing
 GLdouble deltaTime = 0.0;
@@ -177,6 +182,7 @@ public:
         sendTransformsToShader();
         shader.setMat4("model", modelMatrix);
 
+        light->addLightToShader(shader);
         model.Draw(shader);
     }
 
@@ -458,6 +464,8 @@ int main()
         0.f, -1.f, 0.f // default translation
     );
 
+    light->setDirectionalLight(dirLightDirection);
+    
 
     mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
     mainText->setPos(SCR_WIDTH * 0.43f, SCR_HEIGHT * 0.9f, 0.8f);
