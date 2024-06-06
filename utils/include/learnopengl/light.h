@@ -1,5 +1,5 @@
-#ifndef LIGHT_H
-#define LIGHT_H
+#ifndef LIGHTING_H
+#define LIGHTING_H
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -8,7 +8,7 @@
 
 struct Dir_Light {
     bool isUsing = false; // when isUsing is false, do not compute and save resource
-    glm::vec3 direction = glm::vec3(0.06, 0.08, 0.71);
+    glm::vec3 direction = glm::vec3(0.f, 1.f, 1.f);
 
     float ambient= 0.25;
     float diffuse= 0.7;
@@ -45,21 +45,23 @@ struct Spot_Light {
     float quadratic = 0.032f;
 };
 
-class Light {
+class Lighting{
 public:
-    Light(float shininess=32.f) : materialShininess(shininess) 
+    Lighting (float shininess=32.f) : materialShininess(shininess) 
     {
+
     }
 
-    void setDirectionalLight(glm::vec3 direction, float ambient = 0.25f, float diffuse = 0.7f, float specular = 1.f) 
+    void addDirectionalLight(glm::vec3 direction, float ambient = 0.25f, float diffuse = 0.7f, float specular = 1.f) 
     {
         dir_Light.isUsing = true;
+        dir_Light.direction = direction;
         dir_Light.ambient = ambient;
         dir_Light.diffuse = diffuse;
         dir_Light.specular = specular;
     }
 
-    void setPointLight(glm::vec3 position, float constant = 0.9f, float linear = 0.09f, float quadratic = 0.032f, float ambient = 0.25f, float diffuse = 0.7f, float specular = 1.f) 
+    void addPointLight(glm::vec3 position, float constant = 0.9f, float linear = 0.09f, float quadratic = 0.032f, float ambient = 0.25f, float diffuse = 0.7f, float specular = 1.f) 
     {
 		point_Light.isUsing = true;
 		point_Light.position = position;
@@ -71,7 +73,7 @@ public:
 		point_Light.specular = specular;
 	}
 
-    void setSpotLight(glm::vec3 position, glm::vec3 direction, float cutOff = 4.f, float outerCutOff = 6.f, float constant = 0.9f, float linear = 0.09f, float quadratic = 0.032f, float ambient = 0.25f, float diffuse = 0.7f, float specular = 1.f) 
+    void addSpotLight(glm::vec3 position, glm::vec3 direction, float cutOff = 4.f, float outerCutOff = 6.f, float constant = 0.9f, float linear = 0.09f, float quadratic = 0.032f, float ambient = 0.25f, float diffuse = 0.7f, float specular = 1.f) 
     {
         spot_Light.isUsing = true;
         spot_Light.position = position;
@@ -134,9 +136,9 @@ public:
     
 private:
     float materialShininess;
-    Dir_Light dir_Light = Dir_Light();
-    Point_Light point_Light = Point_Light();
-    Spot_Light spot_Light = Spot_Light();
+    Dir_Light dir_Light{};
+    Point_Light point_Light{};
+    Spot_Light spot_Light{};
     
 };
 #endif

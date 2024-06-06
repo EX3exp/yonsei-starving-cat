@@ -98,6 +98,13 @@ static bool catMovingLeft = false; // true일 경우 고양이가 오른쪽으�
 
 glm::vec3 dirLightDirection = glm::vec3(-0.2f, -1.0f, -0.3f);
 
+// light
+
+Lighting light;
+
+
+
+
 GLFWwindow *mainWindow = NULL;
 
 // camera
@@ -106,8 +113,8 @@ float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
-// light
-Light* light = new Light();
+
+
 
 // timing
 GLdouble deltaTime = 0.0;
@@ -181,8 +188,8 @@ public:
 
         sendTransformsToShader();
         shader.setMat4("model", modelMatrix);
-
-        light->addLightToShader(shader);
+        
+        light.addLightToShader(shader);
         model.Draw(shader);
     }
 
@@ -457,6 +464,9 @@ int main()
     string vsText = sourceDirStr + "/text_render.vs"; // text용 vertex shader
     string fsText = sourceDirStr + "/text_render.fs"; // text용 fragment shader
 
+    
+
+
     cat = new Cat(catModelPath, catWalkPath, catEatPath, catJoyPath, catDiePath, // models path
         vs, fs, // shaders
         1.f, 1.f, 1.f, // default scale
@@ -464,8 +474,9 @@ int main()
         0.f, -1.f, 0.f // default translation
     );
 
-    light->setDirectionalLight(dirLightDirection);
     
+    light.addDirectionalLight(dirLightDirection);
+
 
     mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
     mainText->setPos(SCR_WIDTH * 0.43f, SCR_HEIGHT * 0.9f, 0.8f);
