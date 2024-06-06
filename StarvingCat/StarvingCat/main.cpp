@@ -21,6 +21,8 @@
 
 #include <learnopengl/render_text.h>
 
+#include "foods.h" // food.h 파일 포함
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <unordered_map>
@@ -41,6 +43,8 @@ void processInput(GLFWwindow* window);
 void goToNextStage();
 void goToFirstStage();
 
+FoodManager foodManager; // FoodManager 객체 선언
+
 // GLOBAL VARIABLES
 const double MAX_FRAMERATE_LIMIT = 1.0 / 60.0; // 현재 프레임레이트 -- 기본값은 60프레임
 
@@ -49,7 +53,6 @@ const unsigned int SCR_HEIGHT = 720;
 
 const int MAX_STAGE = 9;
 const int MIN_STAGE = 0;
-
 
 // share variables
 static int stage; // stage, 0~9
@@ -787,14 +790,32 @@ void goToNextStage()
     cout << "Go to next Stage -- " << stage << endl;
 
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
-    // TODO -- 음식 배정
-    // TODO -- 스테이지 상한 도달하면 게임 종료
+    
+    // 음식 배정
+    Food leftFood = foodManager.selectRandom(stage);
+    foodLeft = leftFood.name;
+    Food rightFood = foodManager.selectRandom(stage);
+    foodRight = rightFood.name;
+
+    // 스테이지 상한 도달하면 게임 종료
+    if (stage > MAX_STAGE) {
+        gameEndingFlag = true;
+    }
 }
+
 void goToFirstStage()
 {
     stage = 0;
     cout << "Go to 1st Stage -- " << stage << endl;
 
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
-    // TODO -- 음식 배정
+
+    // 사용된 음식 초기화
+    foodManager.reset();
+
+    // 음식 배정
+    Food leftFood = foodManager.selectRandom(stage);
+    foodLeft = leftFood.name;
+    Food rightFood = foodManager.selectRandom(stage);
+    foodRight = rightFood.name;
 }
