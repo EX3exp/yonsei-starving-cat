@@ -17,6 +17,7 @@
 #include <learnopengl/animator.h>
 #include <learnopengl/model_animation.h>
 #include <iostream>
+#include <foods.h>
 
 #include <learnopengl/render_text.h>
 
@@ -90,8 +91,6 @@ static double catStopAndEatStartTime = 0.0; // 고양이가 마지막으로 음�
 static double catShowResultStartTime = 0.0; // 고양이가 마지막으로 반응 움직임을 보인 시간
 static double catStageTransitionStartTime = 0.0;
 
-string foodRight = "chru"; // 오른쪽 밥그릇에 있는 food, 아무것도 없을 때엔 "none"
-string foodLeft = "none"; // 왼쪽 밥그릇에 있는 food, 아무것도 없을 때엔 "none"
 
 static bool catMovingLeft = false; // true일 경우 고양이가 오른쪽으로 움직이는 것으로 가정, 아닐 경우 고양이가 왼쪽으로 움직이는 것으로 가정 
 
@@ -346,8 +345,6 @@ public:
         defaultXtranslation(defaultXtranslation), defaultYtranslation(defaultYtranslation), defaultZtranslation(defaultZtranslation)
     {
         initialTransformMatrix = defaultTransformMatrix;
-        foods.insert({ "none", 0 });
-        foods.insert({"chru", 1});
     }
 
     void toDefaultMotion() {
@@ -362,20 +359,20 @@ public:
         cout << "** changed motion - eat";
         changeMotion(eatMotionPath);
     }
-    // 왼쪽의 음식을 먹을 경우 isMovingLeft = true, 오른쪽 음식을 먹을 경우 isMovingLeft = false
-    bool result(const string food) 
+
+    bool result(Food& food)
     {
         cout << "** changed motion - show result";
         if (!checkCanEat(food)) { // 먹을 수 없는 걸 먹음
-            cout << "eated: " << food << " -- cat will die" << endl;
+            cout << "eated: " << food.PrintName() << " -- cat will die" << endl;
             changeMotion(dieMotionPath);
-            // TODO
+
             return false;
         }
         else { // 먹을 수 있는 걸 먹음
-            cout << "eated: " << food << " -- happy cat" << endl;
+            cout << "eated: " << food.PrintName() << " -- happy cat" << endl;
             changeMotion(joyMotionPath);
-            // TODO
+
             return true;
         }
     }
@@ -391,14 +388,12 @@ public:
         resetTransform();
     }
 private:
-    bool checkCanEat(const string food) 
+    bool checkCanEat(Food& food)
     {
         cout << "checking";
-        return (foods.find(food) != foods.end() && foods[food] != 0 ? true : false);
+        return food.isCanEat();
     }
 
-    // TODO foods 작성 
-    unordered_map<string, int> foods; // <음식이름, 먹을 수 있음> - 예: <"fish", 1> -- 0 이상은 전부 먹을 수 있음 
     float defaultScale;
     
     float defaultXtranslation;
@@ -424,6 +419,10 @@ private:
 Cat* cat;
 Text* mainText;
 Text* messageText;
+
+FoodManager foodManager;
+Food foodRight; // 오른쪽 밥그릇에 있는 food
+Food foodLeft; // 왼쪽 밥그릇에 있는 food
 // TODO 밥그릇과 초원
 
 int main()
@@ -475,6 +474,9 @@ int main()
     const float PI = 3.141592;
 
     cat->resetToRetry();
+
+    foodManager.selectRandom(stage, foodRight);
+    foodManager.selectRandom(stage, foodLeft);
     while (!glfwWindowShouldClose(mainWindow))
     {
         GLdouble now = glfwGetTime();
@@ -597,7 +599,12 @@ int main()
             if (catStageTransitioning) { // 스테이지 전환
                 cout << " - ";
                 if (catMoveNext) {
-                    messageText->setText(U"훌륭해요!"); // TODO
+                    if (catMovingLeft) {
+                        messageText->setText(foodLeft.getMessage());
+                    }
+                    else {
+                        messageText->setText(foodRight.getMessage());
+                    }
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
                         // stops move at next frame
@@ -606,7 +613,12 @@ int main()
                     }
                 }
                 else {
-                    messageText->setText(U"초콜릿은 먹이면 안 됩니다 어쩌고"); // TODO
+                    if (catMovingLeft) {
+                        messageText->setText(foodLeft.getMessage());
+                    }
+                    else {
+                        messageText->setText(foodRight.getMessage());
+                    }
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
                         // stops move at next frame
@@ -763,21 +775,35 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	camera.ProcessMouseScroll(yoffset);
 }
 
-// 
-void goToNextStage() 
-{
-    stage += 1;
-    cout << "Go to next Stage -- " << stage << endl;
-
-    mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
-    // TODO -- 음식 배정
-    // TODO -- 스테이지 상한 도달하면 게임 종료
-}
 void goToFirstStage()
 {
     stage = 0;
     cout << "Go to 1st Stage -- " << stage << endl;
 
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
-    // TODO -- 음식 배정
+
+    // 사용된 음식 초기화
+    foodManager.reset();
+
+    // 음식 배정
+    foodManager.selectRandom(stage, foodRight);
+    foodManager.selectRandom(stage, foodLeft);
+}
+
+void goToNextStage()
+{
+    stage += 1;
+    cout << "Go to next Stage -- " << stage << endl;
+
+    mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
+
+    // 스테이지 상한 도달하면 게임 종료
+    if (stage > MAX_STAGE) {
+        gameEndingFlag = true;
+    }
+    else {
+        // 음식 배정
+        foodManager.selectRandom(stage, foodRight);
+        foodManager.selectRandom(stage, foodLeft);
+    }
 }
