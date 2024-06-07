@@ -624,7 +624,13 @@ int main()
             if (catStageTransitioning) { // 스테이지 전환
                 cout << " - ";
                 if (catMoveNext) {
-                    messageText->setText(U"훌륭해요!"); // TODO
+                    if (catMovingLeft) {
+                        messageText->setText(foodLeft.getMessage());
+					}
+					else {
+						messageText->setText(foodRight.getMessage()); 
+                    }
+
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
                         // stops move at next frame
@@ -633,7 +639,6 @@ int main()
                     }
                 }
                 else {
-                    messageText->setText(U"초콜릿은 먹이면 안 됩니다 어쩌고"); // TODO
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
                         // stops move at next frame

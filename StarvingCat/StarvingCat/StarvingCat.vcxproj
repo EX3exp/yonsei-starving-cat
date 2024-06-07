@@ -128,6 +128,7 @@
       <AdditionalDependencies>freetype.lib; glfw3.lib; opengl32.lib; assimp-vc143-mt.lib; $(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>/NODEFAULTLIB:library</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)assimp-vc143-mt.dll" "$(OutDir)"</Command>
