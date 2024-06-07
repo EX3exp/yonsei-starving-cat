@@ -655,7 +655,9 @@ int main()
 
         // glfw: terminate, clearing all previously allocated GLFW resources.
         // ------------------------------------------------------------------
-
+        delete cat;
+        delete mainText;
+        delete messageText;
         glfwTerminate();
         return 0;
     }
