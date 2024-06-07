@@ -623,14 +623,14 @@ int main()
             }
             if (catStageTransitioning) { // 스테이지 전환
                 cout << " - ";
+
                 if (catMoveNext) {
                     if (catMovingLeft) {
                         messageText->setText(foodLeft.getMessage());
-					}
-					else {
-						messageText->setText(foodRight.getMessage()); 
                     }
-
+                    else {
+                        messageText->setText(foodRight.getMessage());
+                    }
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
                         // stops move at next frame
@@ -639,6 +639,12 @@ int main()
                     }
                 }
                 else {
+                    if (catMovingLeft) {
+                        messageText->setText(foodLeft.getMessage());
+                    }
+                    else {
+                        messageText->setText(foodRight.getMessage());
+                    }
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
                         // stops move at next frame
