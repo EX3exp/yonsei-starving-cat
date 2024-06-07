@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 4.1.1 commit date:2024-04-15, commit time:15:11, hash:e1743a0317bc</authoring_tool>
     </contributor>
-    <created>2024-06-08T03:15:44</created>
-    <modified>2024-06-08T03:15:44</modified>
+    <created>2024-06-08T03:43:27</created>
+    <modified>2024-06-08T03:43:27</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -31,9 +31,6 @@
             <diffuse>
               <texture texture="Muchkin_diffuse_png-sampler" texcoord="UVMap"/>
             </diffuse>
-            <reflectivity>
-              <float sid="specular">0.3527273</float>
-            </reflectivity>
             <index_of_refraction>
               <float sid="ior">1.5</float>
             </index_of_refraction>
