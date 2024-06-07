@@ -434,11 +434,11 @@ int main()
     // load models
     // -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
-    string catModelPath = dataDirStr + "/vampire/dae/dancing_vampire.dae"; // 고양이 모델 경로 -- 모델, 기본 모션용
-    string catWalkPath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // 걷는 고양이 모델 경로 -- 모션용
-    string catEatPath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // 먹는 고양이 모델 경로 -- 모션용
-    string catJoyPath = dataDirStr + "/vampire/dae/dancing_vampire.dae"; // 즐거운 고양이 모델 경로 -- 모션용
-    string catDiePath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
+    string catModelPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 고양이 모델 경로 -- 모델, 기본 모션용
+    string catWalkPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 걷는 고양이 모델 경로 -- 모션용
+    string catEatPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 먹는 고양이 모델 경로 -- 모션용
+    string catJoyPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 즐거운 고양이 모델 경로 -- 모션용
+    string catDiePath = dataDirStr + "/cat/dae/cat_normal.dae"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
 
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
 
