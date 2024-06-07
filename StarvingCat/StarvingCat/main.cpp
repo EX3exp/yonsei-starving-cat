@@ -1,4 +1,4 @@
-﻿// 24-06-04 파일 경로 관련 이슈 수정 (운영체제에 상관없이 그냥 돌리시면 됩니다....)
+// 24-06-04 파일 경로 관련 이슈 수정 (운영체제에 상관없이 그냥 돌리시면 됩니다....)
 // 
 // <디버그 폴더 내에 리소스 파일을 붙여넣어야 할 경우>:
 // (수동으로 복붙하지 마시고)
@@ -14,14 +14,12 @@
 
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
-#include <learnopengl/light.h>
 #include <learnopengl/animator.h>
 #include <learnopengl/model_animation.h>
 #include <iostream>
+#include <foods.h>
 
 #include <learnopengl/render_text.h>
-
-#include "foods.h" // food.h 파일 포함
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -43,8 +41,6 @@ void processInput(GLFWwindow* window);
 void goToNextStage();
 void goToFirstStage();
 
-
-
 // GLOBAL VARIABLES
 const double MAX_FRAMERATE_LIMIT = 1.0 / 60.0; // 현재 프레임레이트 -- 기본값은 60프레임
 
@@ -53,6 +49,7 @@ const unsigned int SCR_HEIGHT = 720;
 
 const int MAX_STAGE = 9;
 const int MIN_STAGE = 0;
+
 
 // share variables
 static int stage; // stage, 0~9
@@ -95,23 +92,7 @@ static double catShowResultStartTime = 0.0; // 고양이가 마지막으로 반�
 static double catStageTransitionStartTime = 0.0;
 
 
-
-Food foodRight; // 오른쪽 밥그릇에 있는 food, 아무것도 없을 때엔 "none"
-Food foodLeft; // 왼쪽 밥그릇에 있는 food, 아무것도 없을 때엔 "none"
-FoodManager foodManager; // FoodManager 객체 선언
-
-
-
-
 static bool catMovingLeft = false; // true일 경우 고양이가 오른쪽으로 움직이는 것으로 가정, 아닐 경우 고양이가 왼쪽으로 움직이는 것으로 가정 
-
-glm::vec3 dirLightDirection = glm::vec3(-0.2f, -1.0f, -0.3f);
-
-// light
-
-Lighting light;
-
-
 
 
 GLFWwindow *mainWindow = NULL;
@@ -121,9 +102,6 @@ Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
-
-
-
 
 // timing
 GLdouble deltaTime = 0.0;
@@ -197,8 +175,7 @@ public:
 
         sendTransformsToShader();
         shader.setMat4("model", modelMatrix);
-        
-        light.addLightToShader(shader);
+
         model.Draw(shader);
     }
 
@@ -382,7 +359,7 @@ public:
         cout << "** changed motion - eat";
         changeMotion(eatMotionPath);
     }
-    
+
     bool result(Food& food)
     {
         cout << "** changed motion - show result";
@@ -442,6 +419,10 @@ private:
 Cat* cat;
 Text* mainText;
 Text* messageText;
+
+FoodManager foodManager;
+Food foodRight; // 오른쪽 밥그릇에 있는 food
+Food foodLeft; // 왼쪽 밥그릇에 있는 food
 // TODO 밥그릇과 초원
 
 int main()
@@ -453,11 +434,11 @@ int main()
     // load models
     // -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
-    string catModelPath = dataDirStr + "/vampire/dae/dancing_vampire.dae"; // 고양이 모델 경로 -- 모델, 기본 모션용
-    string catWalkPath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // 걷는 고양이 모델 경로 -- 모션용
-    string catEatPath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // 먹는 고양이 모델 경로 -- 모션용
-    string catJoyPath = dataDirStr + "/vampire/dae/dancing_vampire.dae"; // 즐거운 고양이 모델 경로 -- 모션용
-    string catDiePath = dataDirStr + "/vampire/dae2/dancing_vampire.dae"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
+    string catModelPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 고양이 모델 경로 -- 모델, 기본 모션용
+    string catWalkPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 걷는 고양이 모델 경로 -- 모션용
+    string catEatPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 먹는 고양이 모델 경로 -- 모션용
+    string catJoyPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 즐거운 고양이 모델 경로 -- 모션용
+    string catDiePath = dataDirStr + "/cat/dae/cat_normal.dae"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
 
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
 
@@ -469,18 +450,12 @@ int main()
     string vsText = sourceDirStr + "/text_render.vs"; // text용 vertex shader
     string fsText = sourceDirStr + "/text_render.fs"; // text용 fragment shader
 
-    
-
-
     cat = new Cat(catModelPath, catWalkPath, catEatPath, catJoyPath, catDiePath, // models path
         vs, fs, // shaders
         1.f, 1.f, 1.f, // default scale
         0.f, glm::vec3(0.f, 1.f, 0.f), // default rotation
         0.f, -1.f, 0.f // default translation
     );
-
-    
-    light.addDirectionalLight(dirLightDirection);
 
 
     mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
@@ -496,12 +471,12 @@ int main()
     // render loop
     // -----------
 
-    foodManager.selectRandom(stage, foodLeft);
-    foodManager.selectRandom(stage, foodRight);
-
     const float PI = 3.141592;
 
     cat->resetToRetry();
+
+    foodManager.selectRandom(stage, foodRight);
+    foodManager.selectRandom(stage, foodLeft);
     while (!glfwWindowShouldClose(mainWindow))
     {
         GLdouble now = glfwGetTime();
@@ -623,7 +598,6 @@ int main()
             }
             if (catStageTransitioning) { // 스테이지 전환
                 cout << " - ";
-
                 if (catMoveNext) {
                     if (catMovingLeft) {
                         messageText->setText(foodLeft.getMessage());
@@ -693,8 +667,6 @@ int main()
 
         // glfw: terminate, clearing all previously allocated GLFW resources.
         // ------------------------------------------------------------------
-
-        
         delete cat;
         delete mainText;
         delete messageText;
@@ -802,7 +774,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll(yoffset);
 }
-
 
 void goToFirstStage()
 {

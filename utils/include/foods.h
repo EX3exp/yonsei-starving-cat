@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <random>
 #include <vector>
 #include <string>
@@ -63,7 +63,7 @@ private:
 };
 
 
-class FoodManager 
+class FoodManager
 {
 public:
     FoodManager() {}
@@ -81,7 +81,7 @@ public:
         food.change(foods[randomNo]);
     }
 
-    void reset() 
+    void reset()
     {
         usedFoods.clear();
     }
