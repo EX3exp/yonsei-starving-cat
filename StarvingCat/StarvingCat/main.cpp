@@ -460,7 +460,7 @@ int main()
     cat = new Cat(catModelPath, catWalkPath, catEatPath, catJoyPath, catDiePath, // models path
         vs, fs, // shaders
         1.f, 1.f, 1.f, // default scale
-        0.f, glm::vec3(0.f, 1.f, 0.f), // default rotation
+        180.f, glm::vec3(0.f, 1.f, 0.f), // default rotation
         0.f, -1.f, 0.f // default translation
     );
 

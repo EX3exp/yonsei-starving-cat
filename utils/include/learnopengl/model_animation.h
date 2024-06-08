@@ -62,7 +62,10 @@ private:
     {
         // read file via ASSIMP
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(path, aiProcess_MakeLeftHanded | aiProcess_Triangulate | aiProcess_FixInfacingNormals | aiProcess_FindDegenerates | aiProcess_ValidateDataStructure | aiProcess_ImproveCacheLocality | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
+
+		unsigned int flags = aiProcess_Triangulate;
+
+        const aiScene* scene = importer.ReadFile(path, flags);
         // check for errors
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
