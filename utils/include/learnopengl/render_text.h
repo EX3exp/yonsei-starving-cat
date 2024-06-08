@@ -100,7 +100,7 @@ public:
         GLfloat yTemp;
         if (lines.size() > 1) {
             GLfloat totalHeight = lines.size() * getHeightPerLine() * 1.5; // Total height of the text
-            GLfloat yStart = y - totalHeight / 2.0f;
+            GLfloat yStart = y - totalHeight / 3.0f;
             yTemp = yStart;
 		}
         else {
@@ -202,6 +202,9 @@ public:
         this->text = text;
     }
 
+    int getTextLength() {
+        return text.length(); // 텍스트의 길이 반환 -- 메시지 띄우는 시간 책정용
+	}
     // 텍스트의 x좌표를 바꿉니다.
     void setX(GLfloat x) 
     {
