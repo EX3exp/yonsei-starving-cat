@@ -40,6 +40,7 @@ void main()
         totalPosition += localPosition * weights[i];
         totalNormal += mat3(finalBonesMatrices[boneIds[i]]) * norm;
    }
+
 	
     FragPos = vec3(model * vec4(pos, 1.0));
     Normal = mat3(transpose(inverse(model))) * totalNormal;

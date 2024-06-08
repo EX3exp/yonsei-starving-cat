@@ -30,6 +30,7 @@ public:
     Text(const std::string& vertexShaderPath, const std::string& fragShaderPath, const std::string& fontPath, const glm::mat4& projection, const std::u32string& text, glm::vec3 &color)
         : shader(vertexShaderPath.c_str(), fragShaderPath.c_str()), projectionMatrix(projection), text(text), color(color)
     {
+        lineNum = 0; // 줄의 개수, 줄이 바꿔질 때마다 1씩 더해짐 - 최소값은 1
         shader.use();
         shader.setMat4("projection", projectionMatrix);
 
@@ -74,8 +75,17 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
 
+        int currentLine = 0; // 현재 그려지고 있는 줄의 번호 -- 0부터 시작
         GLfloat xTemp = x;
         for (auto c : text) {
+
+            if (c == U'\n') { // 개행문자 적용
+				currentLine++;
+				xTemp = x;
+				y -= getHeightPerLine();
+				continue;
+			} 
+
             if (Characters.find(c) == Characters.end()) {
                 Characters[c] = LoadCharacter(face, c);
             }
@@ -144,6 +154,34 @@ public:
         this->scale = scale;
     }
 
+    void setColor(glm::vec3 color) {
+		this->color = color;
+	}
+    
+    GLfloat getTextWidth() {
+		GLfloat textWidth = 0.f;
+        for (auto c : text) {
+            if (Characters.find(c) == Characters.end()) {
+				Characters[c] = LoadCharacter(face, c);
+			}
+			Character ch = Characters[c];
+			textWidth += (ch.Advance >> 6) * scale;
+		}
+        return textWidth;
+	}
+
+    GLfloat getHeightPerLine() {
+        GLfloat textHeight = 0.f;
+        for (auto c : text) {
+            if (Characters.find(c) == Characters.end()) {
+				Characters[c] = LoadCharacter(face, c);
+			}
+			Character ch = Characters[c];
+			textHeight = std::max(textHeight, ch.Size.y * scale);
+		}
+        return textHeight;
+    }
+
     // 텍스트의 y좌표를 바꿉니다.
     void setY(GLfloat y) {
         this->y = y;
@@ -209,6 +247,8 @@ private:
     GLfloat y = 0.f;
     GLfloat scale = 1.f;
     glm::vec3 color;
+
+    int lineNum;
 };
 
 #endif // TEXTRENDERER_H

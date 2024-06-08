@@ -1,4 +1,4 @@
-// 24-06-04 파일 경로 관련 이슈 수정 (운영체제에 상관없이 그냥 돌리시면 됩니다....)
+﻿// 24-06-04 파일 경로 관련 이슈 수정 (운영체제에 상관없이 그냥 돌리시면 됩니다....)
 // 
 // <디버그 폴더 내에 리소스 파일을 붙여넣어야 할 경우>:
 // (수동으로 복붙하지 마시고)
@@ -33,7 +33,7 @@ string fontPath = dataDirStr + "/fonts/Galmuri14.ttf";
 
 
 // FUNCTION PROTOTYPES
-GLFWwindow *glAllInit();
+GLFWwindow* glAllInit();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -60,7 +60,7 @@ static bool catMoveFlag = false; // true면 고양이의 위치를 catMoveAmt만
 static bool catStopAndEatFlag = false; // true일 경우 고양이가 멈춰서 먹고 음식 종류에 따라 반응
 static bool catShowResultFlag = false; // true면 고양이의 반응 보여줌
 static bool catStageTransitionFlag = false; // true면 다음 스테이지로 이동
-    static bool catMoveNext = false; // true면 다음 스테이지로 이동하거나 게임 종료, false면 첫 스테이지로 이동
+static bool catMoveNext = false; // true면 다음 스테이지로 이동하거나 게임 종료, false면 첫 스테이지로 이동
 static bool gameEndingFlag = false; // true일 경우 게임 종료 연출
 
 
@@ -95,7 +95,7 @@ static double catStageTransitionStartTime = 0.0;
 static bool catMovingLeft = false; // true일 경우 고양이가 오른쪽으로 움직이는 것으로 가정, 아닐 경우 고양이가 왼쪽으로 움직이는 것으로 가정 
 
 
-GLFWwindow *mainWindow = NULL;
+GLFWwindow* mainWindow = NULL;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
@@ -110,7 +110,7 @@ GLdouble lastFrameTime = 0.0;
 
 glm::mat4 textProjection = glm::ortho(0.0f, static_cast<GLfloat>(SCR_WIDTH), 0.0f, static_cast<GLfloat>(SCR_HEIGHT));
 // 정수 => 유니코드 문자열로 바꾸는 함수
-std::u32string intToChar32(const int i) 
+std::u32string intToChar32(const int i)
 {
     auto s = std::to_string(i);
     return { s.begin(), s.end() };
@@ -118,17 +118,17 @@ std::u32string intToChar32(const int i)
 
 // 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용 - 애니메이팅 적용되는 오브젝트의 경우 AnimatedObj3D 상속해야 함
 class Obj3D
-{ 
+{
 public:
     Obj3D() = default;
-    Obj3D(string name, string modelPath, string vertexShaderPath, string fragShaderPath, 
-        float defaultXScale=0.5f, float defaultYScale=0.5f, float defaultZScale=0.5f,
-        float defaultRotationAngle=0.f, glm::vec3 defaultRotationAxis= glm::vec3(0.f, 1.f, 0.f),
-        float defaultXtranslation=0.f, float defaultYtranslation=0.4f, float defaultZtranslation=0.f)
+    Obj3D(string name, string modelPath, string vertexShaderPath, string fragShaderPath,
+        float defaultXScale = 0.5f, float defaultYScale = 0.5f, float defaultZScale = 0.5f,
+        float defaultRotationAngle = 0.f, glm::vec3 defaultRotationAxis = glm::vec3(0.f, 1.f, 0.f),
+        float defaultXtranslation = 0.f, float defaultYtranslation = 0.4f, float defaultZtranslation = 0.f)
         : modelPath(modelPath), model(modelPath), shader(vertexShaderPath.c_str(), fragShaderPath.c_str())
     {
         cout << "[Obj3D] '" + name + "' object created" << endl;
-        
+
         // modify default transform matrix
         changeDefaultTransformMatrix(defaultXScale, defaultYScale, defaultZScale,
             defaultRotationAngle, defaultRotationAxis,
@@ -165,10 +165,10 @@ public:
         if (isPlaying) {
             updateAnimation();
         }
-        
+
         projectionMatrix = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         viewMatrix = camera.GetViewMatrix();
-        
+
         // view/projection transformations
         shader.setMat4("projection", projectionMatrix);
         shader.setMat4("view", viewMatrix);
@@ -180,29 +180,29 @@ public:
     }
 
 
-    virtual void updateAnimation() 
+    virtual void updateAnimation()
     {
     }
 
-    virtual void sendTransformsToShader() 
+    virtual void sendTransformsToShader()
     {
     }
-    
-    
-    void translate(float x = 0.f, float y = -0.4f, float z = 0.f) 
+
+
+    void translate(float x = 0.f, float y = -0.4f, float z = 0.f)
     {
         glm::mat4 mat = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
         lastTranslateMatrix = glm::inverse(mat) * lastTranslateMatrix;
         modelMatrix = mat * modelMatrix;
     }
 
-    void scale(float x = .5f, float y = .5f, float z = .5f) 
+    void scale(float x = .5f, float y = .5f, float z = .5f)
     {
         glm::mat4 mat = glm::scale(glm::mat4(1.0f), glm::vec3(x, y, z));
         lastScaleMatrix = glm::inverse(mat) * lastScaleMatrix;
         modelMatrix = mat * modelMatrix;
     }
-    
+
     void rotate(float rotationAngle, glm::vec3 rotationAxis) {
         glm::mat4 mat = glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), rotationAxis);
         lastRotateMatrix = glm::inverse(mat) * lastRotateMatrix;
@@ -244,22 +244,22 @@ protected:
     glm::mat4 lastTranslateMatrix = glm::mat4(1.0f); // translate
     glm::mat4 lastScaleMatrix = glm::mat4(1.0f); // scale
     glm::mat4 lastRotateMatrix = glm::mat4(1.0f); // rotate
-    
+
 };
 
 // 애니메이팅되는 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용
 class AnimatedObj3D : public Obj3D
-{ 
+{
 public:
     AnimatedObj3D() = default;
-    AnimatedObj3D(string name, string modelPath, string vertexShaderPath, string fragShaderPath, 
-        float defaultXScale = 0.5f, float defaultYScale = 0.5f, float defaultZScale = 0.5f, 
+    AnimatedObj3D(string name, string modelPath, string vertexShaderPath, string fragShaderPath,
+        float defaultXScale = 0.5f, float defaultYScale = 0.5f, float defaultZScale = 0.5f,
         float defaultRotationAngle = 0.f, glm::vec3 defaultRotationAxis = glm::vec3(0.f, 1.f, 0.f),
-        float defaultXtranslation = 0.f, float defaultYtranslation = 0.4f, float defaultZtranslation = 0.f) 
-        : Obj3D(name, modelPath, vertexShaderPath, fragShaderPath, 
-            defaultXScale, defaultYScale, defaultZScale, 
-            defaultRotationAngle, defaultRotationAxis, 
-            defaultXtranslation, defaultYtranslation, defaultZtranslation) 
+        float defaultXtranslation = 0.f, float defaultYtranslation = 0.4f, float defaultZtranslation = 0.f)
+        : Obj3D(name, modelPath, vertexShaderPath, fragShaderPath,
+            defaultXScale, defaultYScale, defaultZScale,
+            defaultRotationAngle, defaultRotationAxis,
+            defaultXtranslation, defaultYtranslation, defaultZtranslation)
     {
     }
 
@@ -278,7 +278,7 @@ public:
     }
 
     // 움직임 리셋하고 초기 포즈로 돌아감
-    void reset() 
+    void reset()
     {
         transformsMatrixes = originalTransformsMatrixes;
     }
@@ -328,7 +328,7 @@ protected:
 
 // 고양이
 class Cat : public AnimatedObj3D
-{ 
+{
 public:
     Cat() = default;
     Cat(string modelPath, string walkMotionPath, string eatMotionPath, string joyMotionPath, string dieMotionPath,
@@ -336,11 +336,11 @@ public:
         float defaultXScale = 0.5f, float defaultYScale = 0.5f, float defaultZScale = 0.5f,
         float defaultRotationAngle = 0.f, glm::vec3 defaultRotationAxis = glm::vec3(0.f, 1.f, 0.f),
         float defaultXtranslation = 0.f, float defaultYtranslation = 0.4f, float defaultZtranslation = 0.f) :
-        AnimatedObj3D("cat", modelPath, vertexShaderPath, fragShaderPath, 
-            defaultXScale, defaultYScale, defaultZScale, 
-            defaultRotationAngle, defaultRotationAxis, 
+        AnimatedObj3D("cat", modelPath, vertexShaderPath, fragShaderPath,
+            defaultXScale, defaultYScale, defaultZScale,
+            defaultRotationAngle, defaultRotationAxis,
             defaultXtranslation, defaultYtranslation, defaultZtranslation),
-        walkMotionPath(walkMotionPath), eatMotionPath(eatMotionPath), dieMotionPath(dieMotionPath), joyMotionPath(joyMotionPath), 
+        walkMotionPath(walkMotionPath), eatMotionPath(eatMotionPath), dieMotionPath(dieMotionPath), joyMotionPath(joyMotionPath),
         defaultScale(defaultYScale), defaultRotationAngle(defaultRotationAngle), defaultRotationAxis(defaultRotationAxis),
         defaultXtranslation(defaultXtranslation), defaultYtranslation(defaultYtranslation), defaultZtranslation(defaultZtranslation)
     {
@@ -395,7 +395,7 @@ private:
     }
 
     float defaultScale;
-    
+
     float defaultXtranslation;
     float defaultYtranslation;
     float defaultZtranslation;
@@ -434,11 +434,11 @@ int main()
     // load models
     // -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
-    string catModelPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 고양이 모델 경로 -- 모델, 기본 모션용
-    string catWalkPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 걷는 고양이 모델 경로 -- 모션용
-    string catEatPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 먹는 고양이 모델 경로 -- 모션용
-    string catJoyPath = dataDirStr + "/cat/dae/cat_normal.dae"; // 즐거운 고양이 모델 경로 -- 모션용
-    string catDiePath = dataDirStr + "/cat/dae/cat_normal.dae"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
+    string catModelPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 고양이 모델 경로 -- 모델, 기본 모션용
+    string catWalkPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 걷는 고양이 모델 경로 -- 모션용
+    string catEatPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 먹는 고양이 모델 경로 -- 모션용
+    string catJoyPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 즐거운 고양이 모델 경로 -- 모션용
+    string catDiePath = dataDirStr + "/cat/dae/TuxCat.dae"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
 
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
 
@@ -645,36 +645,36 @@ int main()
                 catEating = false; // 입력 차단 풀기
 
             }
-                // End of the Motions
+            // End of the Motions
 
-                processInput(mainWindow);
-                deltaTime = now - lastUpdateTime;
+            processInput(mainWindow);
+            deltaTime = now - lastUpdateTime;
 
 
-                lastFrameTime = now;
-            }
-
-            // Draw
-            cat->draw();
-            mainText->draw();
-            messageText->draw();
-            // TODO 초원, 밥그릇, 밥 그리기, Lighting
-
-            lastUpdateTime = now;
-            glfwSwapBuffers(mainWindow);
-            glfwPollEvents();
+            lastFrameTime = now;
         }
 
-        // glfw: terminate, clearing all previously allocated GLFW resources.
-        // ------------------------------------------------------------------
-        delete cat;
-        delete mainText;
-        delete messageText;
-        glfwTerminate();
-        return 0;
+        // Draw
+        cat->draw();
+        mainText->draw();
+        messageText->draw();
+        // TODO 초원, 밥그릇, 밥 그리기, Lighting
+
+        lastUpdateTime = now;
+        glfwSwapBuffers(mainWindow);
+        glfwPollEvents();
     }
 
-GLFWwindow *glAllInit()
+    // glfw: terminate, clearing all previously allocated GLFW resources.
+    // ------------------------------------------------------------------
+    delete cat;
+    delete mainText;
+    delete messageText;
+    glfwTerminate();
+    return 0;
+}
+
+GLFWwindow* glAllInit()
 {
     // glfw: initialize and configure
     // ------------------------------
@@ -682,11 +682,11 @@ GLFWwindow *glAllInit()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
+
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    
+
     // glfw window creation
     // --------------------
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Starving Cat", NULL, NULL);
@@ -701,7 +701,7 @@ GLFWwindow *glAllInit()
     glfwSetScrollCallback(window, scroll_callback);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    
+
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -709,15 +709,15 @@ GLFWwindow *glAllInit()
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit(-1);
     }
-    
+
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
-    
-    
+
+
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
-    
+
     return window;
 }
 
@@ -735,7 +735,7 @@ void processInput(GLFWwindow* window)
             catMovingLeft = true;
             catEating = true;
         }
-        
+
     }
     else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         if (!catEating) {
@@ -747,14 +747,14 @@ void processInput(GLFWwindow* window)
     }
 
     /*
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
      */
 }
 
@@ -762,17 +762,17 @@ void processInput(GLFWwindow* window)
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
-    
+    // make sure the viewport matches the new window dimensions; note that width and 
+    // height will be significantly larger than specified on retina displays.
+    glViewport(0, 0, width, height);
+
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera.ProcessMouseScroll(yoffset);
+    camera.ProcessMouseScroll(yoffset);
 }
 
 void goToFirstStage()
