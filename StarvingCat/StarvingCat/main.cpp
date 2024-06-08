@@ -483,7 +483,7 @@ int main()
 
     titleText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
     titleText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.7f, 0.85f);
-    //glEnable(GL_CULL_FACE); // cull face to reduce memory usage
+    glEnable(GL_CULL_FACE); // cull face to reduce memory usage
     glClearColor(1.f, 1.f, 1.f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
