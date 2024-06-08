@@ -70,8 +70,14 @@ public:
 
     void draw()
     {
+        
         shader.use();
-        shader.setVec3("textColor", color);
+        if (isurgent) {
+            shader.setVec3("textColor", glm::vec3(0.55f, 0.09f, 0.09f)); // scarlet
+        }
+        else {
+            shader.setVec3("textColor", color);
+        }
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
 
@@ -90,7 +96,16 @@ public:
         }
         lines.push_back(currentLine); // Add the last line
 
-        GLfloat yTemp = y;
+        GLfloat yTemp;
+        if (lines.size() > 1) {
+            GLfloat totalHeight = lines.size() * getHeightPerLine() * 1.5; // Total height of the text
+            GLfloat yStart = y + totalHeight / 2.0f;
+            yTemp = yStart;
+		}
+        else {
+            yTemp = y;
+		}
+        
 
         for (const auto& line : lines) {
             // Calculate the width of the current line
@@ -105,7 +120,7 @@ public:
 
             // Calculate the starting x position for the current line to center it
             GLfloat xTemp = x - lineWidth / 2.0f;
-
+            
             for (auto c : line) {
                 Character ch = Characters[c];
 
@@ -152,9 +167,10 @@ public:
     }
 
 
-    // 표시되는 텍스트를 변경합니다.
-    void setText(const std::u32string& text) 
+    // 표시되는 텍스트를 변경합니다. urgent가 true이면 텍스트가 붉은 색이 됩니다.
+    void setText(const std::u32string& text, bool urgent = false) 
     {
+        isurgent = urgent;
         this->text = text;
     }
 
@@ -270,7 +286,7 @@ private:
     GLfloat y = 0.f;
     GLfloat scale = 1.f;
     glm::vec3 color;
-
+    bool isurgent = false;
     int lineNum;
 };
 

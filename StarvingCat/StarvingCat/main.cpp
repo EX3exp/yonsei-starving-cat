@@ -61,15 +61,15 @@ static bool catStopAndEatFlag = false; // true일 경우 고양이가 멈춰서 
 static bool catShowResultFlag = false; // true면 고양이의 반응 보여줌
 static bool catStageTransitionFlag = false; // true면 다음 스테이지로 이동
 static bool catMoveNext = false; // true면 다음 스테이지로 이동하거나 게임 종료, false면 첫 스테이지로 이동
-static bool gameEndingFlag = false; // true일 경우 게임 종료 연출
-
+static bool gameEndingFlag = false; // true일 경우 게임 종료 연출 -- 게임 진행 안함
+static bool catStageEndFlag = false; // true일 경우 스테이지 종료 연출 
 
 // stop flags
 static bool catMoveStopFlag = false; // true면 고양이 위치가 다 이동했다고 간주
 static bool catStopAndEatStopFlag = false;
 static bool catShowResultStopFlag = false;
 static bool catStageTransitionStopFlag = false;
-
+static bool catStageEndStopFlag = false;
 
 // processing
 static bool catEating = false; // true while whole cat motion -- blocks left+right input when false
@@ -78,23 +78,26 @@ static bool catMoving = false; // true일 경우 고양이가 움직이고 있�
 static bool catStopAndEating = false; // true일 경우 고양이가 먹고 있음
 static bool catShowingResult = false; // true일 경우 고양이가 반응 표시
 static bool catStageTransitioning = false; // true일 경우 스테이지 전환 중
+static bool catStageEnding = false; // true일 경우 스테이지종료 연출 중
 
 // time temp
 static double catMovedTime = 0.0; // [초기 이동] 고양이가 마지막으로 움직인 시간
 static double catStopAndEatTime = 0.0; // [초기 이동 후 음식 먹음] 고양이 음식먹는 모션 시간
 static double catShowResultTime = 0.0; // [초기 이동 후 음식 먹고 반응] 고양이 반응 모션 시간
 static double catStageTransitionTime = 0.0;
-
+static double catStageEndingTime = 0.0;
 // start time
 static double catMoveStartTime = 0.0; // 고양이가 움직이기 시작한 시간
 static double catStopAndEatStartTime = 0.0; // 고양이가 마지막으로 음식먹는 움직임을 한 시간
 static double catShowResultStartTime = 0.0; // 고양이가 마지막으로 반응 움직임을 보인 시간
 static double catStageTransitionStartTime = 0.0;
 
+static double catStageEndingStartTime = 0.0;
 
 static bool catMovingLeft = false; // true일 경우 고양이가 오른쪽으로 움직이는 것으로 가정, 아닐 경우 고양이가 왼쪽으로 움직이는 것으로 가정 
 
 
+int maxRecord = 0; // 0~9, 최고기록을 기록하는 변수
 GLFWwindow* mainWindow = NULL;
 
 // camera
@@ -419,7 +422,10 @@ private:
 Cat* cat;
 Text* mainText;
 Text* messageText;
-
+Text* leftText;
+Text* rightText;
+Text* helperText;
+Text* titleText;
 FoodManager foodManager;
 Food foodRight; // 오른쪽 밥그릇에 있는 food
 Food foodLeft; // 왼쪽 밥그릇에 있는 food
@@ -464,6 +470,18 @@ int main()
     messageText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
     messageText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.5f, 0.8f);
 
+    leftText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
+    leftText->setPos(SCR_WIDTH * 0.2f, SCR_HEIGHT * 0.1f, 0.8f);
+
+    rightText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
+    rightText->setPos(SCR_WIDTH * 0.8f, SCR_HEIGHT * 0.1f, 0.8f);
+
+
+    helperText = new Text(vsText, fsText, fontPath, textProjection, U"방향키를 눌러 음식을 먹으세요!", darkblue);
+    helperText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.1f, 0.4f);
+
+    titleText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
+    titleText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.8f, 1.0f);
     //glEnable(GL_CULL_FACE); // cull face to reduce memory usage
     glClearColor(1.f, 1.f, 1.f, 1.0f);
     glEnable(GL_BLEND);
@@ -477,6 +495,8 @@ int main()
 
     foodManager.selectRandom(stage, foodRight);
     foodManager.selectRandom(stage, foodLeft);
+    leftText->setText(foodLeft.getName());
+    rightText->setText(foodRight.getName());
     while (!glfwWindowShouldClose(mainWindow))
     {
         GLdouble now = glfwGetTime();
@@ -510,6 +530,10 @@ int main()
                 catStageTransitionFlag = false;
                 catStageTransitioning = false;
                 catStageTransitionStopFlag = false;
+
+                catStageEndFlag = false;
+                catStageEnding = false;
+                catStageEndStopFlag = false;
 
                 cat->rotate(factor * 90.f, glm::vec3(0.f, 1.f, 0.f));
             }
@@ -599,6 +623,9 @@ int main()
             if (catStageTransitioning) { // 스테이지 전환
                 cout << " - ";
                 if (catMoveNext) {
+                    helperText->setText(U"맛있었다.");
+                    rightText->clearText();
+                    leftText->clearText();
                     if (catMovingLeft) {
                         messageText->setText(foodLeft.getMessage());
                     }
@@ -613,10 +640,13 @@ int main()
                     }
                 }
                 else {
+                    helperText->setText(U"으윽, 이건!", true);
                     if (catMovingLeft) {
+                        titleText->setText(foodLeft.getName());
                         messageText->setText(foodLeft.getMessage());
                     }
                     else {
+                        titleText->setText(foodRight.getName());
                         messageText->setText(foodRight.getMessage());
                     }
                     if (now - catStageTransitionStartTime >= 5) {
@@ -629,22 +659,76 @@ int main()
 
             }
             if (catStageTransitionStopFlag) { // 멈춤 준비
-                cout << endl << "   go to next" << endl;
+                cout << endl << "   will finish the stage" << endl;
                 catStageTransitionStopFlag = false;
                 messageText->clearText();
 
                 if (catMoveNext) {
+                    titleText -> setText(U"클리어!");
+                    messageText->setText(U"몸이 조금 자라났다! \n다음 스테이지로 넘어갑니다.");
+                    helperText->clearText();
                     cat->grow();
-                    goToNextStage();
+                    catStageTransitionStopFlag  = false;
+                    catStageEndFlag = true;
                 }
                 else {
+                    titleText->setText(U"최고기록: " + intToChar32(maxRecord + 1), true);
+                    helperText->clearText();
+                    messageText->setText(U"이런, 죽어버렸다... \n1스테이지로 다시 돌아갑니다.", true);
+                    cat->resetToRetry();
+                    catStageTransitionStopFlag = false;
+                    catStageEndFlag = true;
+                }
+
+            }
+        
+            // ---------------- 
+            // 5. 종료 연출 
+            if (catStageEndFlag) { // 스테이지 종료 준비 
+                cout << "   going to next stage" << endl;
+                // starts eat at next frame
+                catStageEndingStartTime = now;
+                catStageEndFlag = false;
+                catStageEnding = true;
+                catStageEndStopFlag = false;
+            }
+            if (catStageEnding) { // 스테이지 종료
+                cout << " - ";
+                if (now - catStageEndingStartTime >= 4) {
+                    cout << "   finishing stage" << endl;
+                    // stops move at next frame
+                    catStageEndStopFlag = true;
+                    catStageEnding = false;
+                }
+            }
+            if (catStageEndStopFlag) { // 멈춤 준비
+                cout << endl << "   proceed" << endl;
+ 
+                titleText->clearText();
+
+                if (catMoveNext) {
+                    if (stage == MAX_STAGE) {
+                        helperText->clearText();
+                        titleText->clearText();
+                        gameEndingFlag = true;
+                    }
+                    else {
+                        helperText->clearText();
+                        titleText->clearText();
+                        goToNextStage();
+                    }  
+                }
+                else {
+                    
                     cat->resetToRetry();
                     goToFirstStage();
                 }
-
-                
-
+                messageText->clearText();
+                catStageEndStopFlag = false;
+                catEating = false;
             }
+
+            
             // End of the Motions
 
             processInput(mainWindow);
@@ -658,6 +742,10 @@ int main()
         cat->draw();
         mainText->draw();
         messageText->draw();
+        leftText->draw();
+        rightText->draw();
+        helperText->draw();
+        titleText->draw();
         // TODO 초원, 밥그릇, 밥 그리기, Lighting
 
         lastUpdateTime = now;
@@ -670,6 +758,10 @@ int main()
     delete cat;
     delete mainText;
     delete messageText;
+    delete leftText;
+    delete rightText;
+    delete helperText;
+    delete titleText;
     glfwTerminate();
     return 0;
 }
@@ -734,6 +826,7 @@ void processInput(GLFWwindow* window)
             catMoveFlag = true;
             catMovingLeft = true;
             catEating = true;
+            helperText->setText(U"[System] 왼쪽 음식을 먹었다!");
         }
 
     }
@@ -743,6 +836,7 @@ void processInput(GLFWwindow* window)
             catMoveFlag = true;
             catMovingLeft = false;
             catEating = true;
+            helperText->setText(U"[System] 오른쪽 음식을 먹었다!");
         }
     }
 
@@ -779,7 +873,7 @@ void goToFirstStage()
 {
     stage = 0;
     cout << "Go to 1st Stage -- " << stage << endl;
-
+    titleText->clearText();
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
 
     // 사용된 음식 초기화
@@ -788,24 +882,24 @@ void goToFirstStage()
     // 음식 배정
     foodManager.selectRandom(stage, foodRight);
     foodManager.selectRandom(stage, foodLeft);
-    catEating = false; // 입력 차단 풀기
+    leftText->setText(foodLeft.getName());
+    rightText->setText(foodRight.getName());
 }
 
 void goToNextStage()
 {
+    if (maxRecord < stage) {
+        maxRecord = stage; // 최고기록 갱신
+    }
+		
     stage += 1;
     cout << "Go to next Stage -- " << stage << endl;
 
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
 
-    // 스테이지 상한 도달하면 게임 종료
-    if (stage > MAX_STAGE) {
-        gameEndingFlag = true;
-    }
-    else {
-        // 음식 배정
-        foodManager.selectRandom(stage, foodRight);
-        foodManager.selectRandom(stage, foodLeft);
-    }
-    catEating = false; // 입력 차단 풀기
+    // 음식 배정
+    foodManager.selectRandom(stage, foodRight);
+    foodManager.selectRandom(stage, foodLeft);
+    leftText->setText(foodLeft.getName());
+    rightText->setText(foodRight.getName());
 }
