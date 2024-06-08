@@ -73,11 +73,16 @@ public:
         int randomNo;
         bool isSelected = false;
         while (!isSelected) {
+            
             randomNo = randomNumber(0, foods.size() - 1);
-            if (!(foods[randomNo].getMinStage() > stage) && usedFoods.find(foods[randomNo].getName()) == usedFoods.end())
+            if (!(foods[randomNo].getMinStage() > stage) && usedFoods.find(foods[randomNo].getName()) == usedFoods.end() && ((isFirstTarget && foods[randomNo].isCanEat() != prevFoodCanEat)) || !isFirstTarget) {
                 isSelected = true;
+            }
+                
         }
         usedFoods.insert(foods[randomNo].getName());
+        prevFoodCanEat = foods[randomNo].isCanEat();
+        isFirstTarget = !isFirstTarget;
         food.change(foods[randomNo]);
     }
 
@@ -119,5 +124,7 @@ private:
         Food(U"마늘", 0, U"마늘을 고양이가 먹게 될 경우 적혈구 손상으로 인한 빈혈으로 이어집니다.\n 분말로 된 양파와 마늘도 마찬가지니 절대 주지 마세요.", 0)
     };
 
+    bool isFirstTarget = false; // 못 먹는 음식만 두 개 나오는 경우 방지
+    bool prevFoodCanEat;
     unordered_set<u32string> usedFoods; // 이미 사용된 음식들을 저장
 };
