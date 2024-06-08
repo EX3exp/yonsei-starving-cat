@@ -16,9 +16,10 @@
 #include <learnopengl/camera.h>
 #include <learnopengl/animator.h>
 #include <learnopengl/model_animation.h>
+#include <learnopengl/model.h>
 #include <iostream>
 #include <foods.h>
-
+#include <cube.h>
 #include <learnopengl/render_text.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -421,6 +422,10 @@ private:
 
 };
 Cat* cat;
+Obj3D* grass;
+Obj3D* bowlLeft;
+Obj3D* bowlRight;
+
 Text* mainText;
 Text* messageText;
 Text* leftText;
@@ -447,6 +452,7 @@ int main()
     string catJoyPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 즐거운 고양이 모델 경로 -- 모션용
     string catDiePath = dataDirStr + "/cat/dae/TuxCat.dae"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
 
+    string grassPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 초원 모델 경로
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
 
     // build and compile shaders
@@ -464,6 +470,7 @@ int main()
         0.f, -1.f, 0.f // default translation
     );
 
+    grass = new Obj3D("grass", grassPath, vs, fs, 2.f, 2.f, 2.f);
 
     mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
     mainText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.9f, 1.0f);
@@ -769,6 +776,7 @@ int main()
         rightText->draw();
         helperText->draw();
         titleText->draw();
+        grass->draw();
         // TODO 초원, 밥그릇, 밥 그리기, Lighting
 
         lastUpdateTime = now;
@@ -779,6 +787,9 @@ int main()
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     delete cat;
+    delete grass;
+    delete bowlLeft;
+    delete bowlRight;
     delete mainText;
     delete messageText;
     delete leftText;
