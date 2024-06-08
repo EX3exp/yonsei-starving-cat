@@ -72,6 +72,7 @@ public:
     {
         
         shader.use();
+
         if (isurgent) {
             shader.setVec3("textColor", glm::vec3(0.55f, 0.09f, 0.09f)); // scarlet
         }
@@ -99,7 +100,7 @@ public:
         GLfloat yTemp;
         if (lines.size() > 1) {
             GLfloat totalHeight = lines.size() * getHeightPerLine() * 1.5; // Total height of the text
-            GLfloat yStart = y + totalHeight / 2.0f;
+            GLfloat yStart = y - totalHeight / 2.0f;
             yTemp = yStart;
 		}
         else {
@@ -142,6 +143,33 @@ public:
                 };
 
                 glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+
+                
+                // Draw the character with multiple offsets to simulate bold effect
+                GLfloat boldOffset = 0.2f; // Adjust this value for more or less boldness
+                for (GLfloat dx = -boldOffset; dx <= boldOffset; dx += boldOffset) {
+                    for (GLfloat dy = -boldOffset; dy <= boldOffset; dy += boldOffset) {
+                        // Update vertex positions with offsets
+                        for (int i = 0; i < 6; ++i) {
+                            vertices[i][0] += dx;
+                            vertices[i][1] += dy;
+                        }
+
+                        // Bind the buffer and map its memory
+                        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+                        void* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+                        if (ptr) {
+                            memcpy(ptr, vertices, sizeof(vertices));
+                            glUnmapBuffer(GL_ARRAY_BUFFER);
+                        }
+                        else {
+                            // Handle error
+                            std::cerr << "Failed to map buffer" << std::endl;
+                        }
+                        glBindBuffer(GL_ARRAY_BUFFER, 0);
+                        glDrawArrays(GL_TRIANGLES, 0, 6);
+                    }
+                }
 
                 // Bind the buffer and map its memory
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);

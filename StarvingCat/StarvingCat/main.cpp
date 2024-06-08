@@ -468,7 +468,7 @@ int main()
     mainText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.9f, 1.0f);
 
     messageText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
-    messageText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.5f, 0.8f);
+    messageText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.5f, 0.75f);
 
     leftText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
     leftText->setPos(SCR_WIDTH * 0.2f, SCR_HEIGHT * 0.1f, 0.8f);
@@ -481,7 +481,7 @@ int main()
     helperText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.1f, 0.4f);
 
     titleText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
-    titleText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.8f, 1.0f);
+    titleText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.7f, 0.85f);
     //glEnable(GL_CULL_FACE); // cull face to reduce memory usage
     glClearColor(1.f, 1.f, 1.f, 1.0f);
     glEnable(GL_BLEND);
@@ -627,9 +627,11 @@ int main()
                     rightText->clearText();
                     leftText->clearText();
                     if (catMovingLeft) {
+                        titleText->setText(foodLeft.getName());
                         messageText->setText(foodLeft.getMessage());
                     }
                     else {
+                        titleText->setText(foodRight.getName());
                         messageText->setText(foodRight.getMessage());
                     }
                     if (now - catStageTransitionStartTime >= 5) {
@@ -640,14 +642,16 @@ int main()
                     }
                 }
                 else {
+                    rightText->clearText();
+                    leftText->clearText();
                     helperText->setText(U"으윽, 이건!", true);
                     if (catMovingLeft) {
-                        titleText->setText(foodLeft.getName());
-                        messageText->setText(foodLeft.getMessage());
+                        titleText->setText(foodLeft.getName(), true);
+                        messageText->setText(foodLeft.getMessage(), true);
                     }
                     else {
-                        titleText->setText(foodRight.getName());
-                        messageText->setText(foodRight.getMessage());
+                        titleText->setText(foodRight.getName(), true);
+                        messageText->setText(foodRight.getMessage(), true);
                     }
                     if (now - catStageTransitionStartTime >= 5) {
                         cout << "   cat will go next" << endl;
@@ -672,7 +676,7 @@ int main()
                     catStageEndFlag = true;
                 }
                 else {
-                    titleText->setText(U"최고기록: " + intToChar32(maxRecord + 1), true);
+                    titleText->setText(U"최고기록: " + intToChar32(maxRecord + 1)+ U" 스테이지", true);
                     helperText->clearText();
                     messageText->setText(U"이런, 죽어버렸다... \n1스테이지로 다시 돌아갑니다.", true);
                     cat->resetToRetry();
@@ -880,6 +884,7 @@ void goToFirstStage()
     foodManager.reset();
 
     // 음식 배정
+    helperText->setText(U"방향키를 눌러 음식을 먹으세요!");
     foodManager.selectRandom(stage, foodRight);
     foodManager.selectRandom(stage, foodLeft);
     leftText->setText(foodLeft.getName());
@@ -898,6 +903,7 @@ void goToNextStage()
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
 
     // 음식 배정
+    helperText->setText(U"방향키를 눌러 음식을 먹으세요!");
     foodManager.selectRandom(stage, foodRight);
     foodManager.selectRandom(stage, foodLeft);
     leftText->setText(foodLeft.getName());
