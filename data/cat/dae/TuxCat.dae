@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 4.1.1 commit date:2024-04-15, commit time:15:11, hash:e1743a0317bc</authoring_tool>
     </contributor>
-    <created>2024-06-08T15:33:54</created>
-    <modified>2024-06-08T15:33:54</modified>
+    <created>2024-06-08T15:40:43</created>
+    <modified>2024-06-08T15:40:43</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -404,7 +404,7 @@
     </controller>
     <controller id="metarig_004_Eyes-skin" name="metarig.004">
       <skin source="#Sphere-mesh">
-        <bind_shape_matrix>2.032834 0 0 0 0 2.032834 -7.10543e-15 -3.245356 0 0 2.032834 0.320003 0 0 0 1</bind_shape_matrix>
+        <bind_shape_matrix>0.2031749 0 0 0 0 0.2031749 2.42203e-8 1.51373e-7 0 -2.42203e-8 0.2031749 -5.96046e-8 0 0 0 1</bind_shape_matrix>
         <source id="metarig_004_Eyes-skin-joints">
           <Name_array id="metarig_004_Eyes-skin-joints-array" count="38">spine_007 spine_008 spine_009 spine_010 Head Ear_L Ear1_L Ear_R Ear1_R Eye_L Eye_R shoulder_L front_thigh_L front_shin_L front_foot_L front_toe_L shoulder_R front_thigh_R front_shin_R front_foot_R front_toe_R spine_006 spine_005 spine_004 TailBase Tail2 Tail3 TailTip pelvis_L thigh_L shin_L foot_L toe_L pelvis_R thigh_R shin_R foot_R toe_R</Name_array>
           <technique_common>
@@ -443,7 +443,7 @@
     </controller>
     <controller id="metarig_004_EyeRims-skin" name="metarig.004">
       <skin source="#EyeReal-mesh">
-        <bind_shape_matrix>2.032834 0 0 0 0 2.032834 -7.10543e-15 -4.868034 0 0 2.032834 0.4800048 0 0 0 1</bind_shape_matrix>
+        <bind_shape_matrix>0.2031749 0 0 0 0 0.2031749 2.42203e-8 -0.1621811 0 -2.42203e-8 0.2031749 0.01599157 0 0 0 1</bind_shape_matrix>
         <source id="metarig_004_EyeRims-skin-joints">
           <Name_array id="metarig_004_EyeRims-skin-joints-array" count="2">Head spine_006</Name_array>
           <technique_common>
@@ -1945,6 +1945,46 @@ Layer 20</collections>
             </technique>
           </extra>
         </node>
+        <node id="EyeRims" name="EyeRims" type="NODE">
+          <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+          <instance_controller url="#metarig_004_EyeRims-skin">
+            <skeleton>#metarig_004_FootIK_L</skeleton>
+            <skeleton>#metarig_004_FootIK_R</skeleton>
+            <skeleton>#metarig_004_Root</skeleton>
+            <skeleton>#metarig_004_BackFootIK_L</skeleton>
+            <skeleton>#metarig_004_BackFootIK_R</skeleton>
+            <skeleton>#metarig_004_EyeTarget</skeleton>
+            <bind_material>
+              <technique_common>
+                <instance_material symbol="Pupil-material" target="#Pupil-material"/>
+              </technique_common>
+            </bind_material>
+          </instance_controller>
+        </node>
+        <node id="Eyes" name="Eyes" type="NODE">
+          <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+          <instance_controller url="#metarig_004_Eyes-skin">
+            <skeleton>#metarig_004_FootIK_L</skeleton>
+            <skeleton>#metarig_004_FootIK_R</skeleton>
+            <skeleton>#metarig_004_Root</skeleton>
+            <skeleton>#metarig_004_BackFootIK_L</skeleton>
+            <skeleton>#metarig_004_BackFootIK_R</skeleton>
+            <skeleton>#metarig_004_EyeTarget</skeleton>
+            <bind_material>
+              <technique_common>
+                <instance_material symbol="EyeColor-material" target="#EyeColor-material">
+                  <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+                </instance_material>
+                <instance_material symbol="Pupil-material" target="#Pupil-material">
+                  <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+                </instance_material>
+                <instance_material symbol="EyeHighlight-material" target="#EyeHighlight-material">
+                  <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+                </instance_material>
+              </technique_common>
+            </bind_material>
+          </instance_controller>
+        </node>
         <node id="Cat" name="Cat" type="NODE">
           <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
           <instance_controller url="#metarig_004_Cat-skin">
@@ -1971,46 +2011,6 @@ Layer 20</collections>
               </technique_common>
             </bind_material>
           </instance_controller>
-          <node id="EyeRims" name="EyeRims" type="NODE">
-            <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
-            <instance_controller url="#metarig_004_EyeRims-skin">
-              <skeleton>#metarig_004_FootIK_L</skeleton>
-              <skeleton>#metarig_004_FootIK_R</skeleton>
-              <skeleton>#metarig_004_Root</skeleton>
-              <skeleton>#metarig_004_BackFootIK_L</skeleton>
-              <skeleton>#metarig_004_BackFootIK_R</skeleton>
-              <skeleton>#metarig_004_EyeTarget</skeleton>
-              <bind_material>
-                <technique_common>
-                  <instance_material symbol="Pupil-material" target="#Pupil-material"/>
-                </technique_common>
-              </bind_material>
-            </instance_controller>
-          </node>
-          <node id="Eyes" name="Eyes" type="NODE">
-            <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
-            <instance_controller url="#metarig_004_Eyes-skin">
-              <skeleton>#metarig_004_FootIK_L</skeleton>
-              <skeleton>#metarig_004_FootIK_R</skeleton>
-              <skeleton>#metarig_004_Root</skeleton>
-              <skeleton>#metarig_004_BackFootIK_L</skeleton>
-              <skeleton>#metarig_004_BackFootIK_R</skeleton>
-              <skeleton>#metarig_004_EyeTarget</skeleton>
-              <bind_material>
-                <technique_common>
-                  <instance_material symbol="EyeColor-material" target="#EyeColor-material">
-                    <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
-                  </instance_material>
-                  <instance_material symbol="Pupil-material" target="#Pupil-material">
-                    <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
-                  </instance_material>
-                  <instance_material symbol="EyeHighlight-material" target="#EyeHighlight-material">
-                    <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
-                  </instance_material>
-                </technique_common>
-              </bind_material>
-            </instance_controller>
-          </node>
         </node>
         <extra>
           <technique profile="blender">
