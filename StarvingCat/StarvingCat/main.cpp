@@ -464,7 +464,7 @@ int main()
     messageText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
     messageText->setPos(SCR_WIDTH * 0.3f, SCR_HEIGHT * 0.5f, 1.f);
 
-    glEnable(GL_CULL_FACE); // cull face to reduce memory usage
+    //glEnable(GL_CULL_FACE); // cull face to reduce memory usage
     glClearColor(1.f, 1.f, 1.f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -642,7 +642,7 @@ int main()
                     goToFirstStage();
                 }
 
-                catEating = false; // 입력 차단 풀기
+                
 
             }
             // End of the Motions
@@ -788,6 +788,7 @@ void goToFirstStage()
     // 음식 배정
     foodManager.selectRandom(stage, foodRight);
     foodManager.selectRandom(stage, foodLeft);
+    catEating = false; // 입력 차단 풀기
 }
 
 void goToNextStage()
@@ -806,4 +807,5 @@ void goToNextStage()
         foodManager.selectRandom(stage, foodRight);
         foodManager.selectRandom(stage, foodLeft);
     }
+    catEating = false; // 입력 차단 풀기
 }
