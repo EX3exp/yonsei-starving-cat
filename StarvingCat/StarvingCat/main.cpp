@@ -459,10 +459,10 @@ int main()
 
 
     mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
-    mainText->setPos(SCR_WIDTH * 0.43f, SCR_HEIGHT * 0.9f, 0.8f);
+    mainText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.9f, 1.0f);
 
     messageText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
-    messageText->setPos(SCR_WIDTH * 0.3f, SCR_HEIGHT * 0.5f, 1.f);
+    messageText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.5f, 0.8f);
 
     //glEnable(GL_CULL_FACE); // cull face to reduce memory usage
     glClearColor(1.f, 1.f, 1.f, 1.0f);

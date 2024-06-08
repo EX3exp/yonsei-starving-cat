@@ -75,59 +75,82 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
 
-        int currentLine = 0; // 현재 그려지고 있는 줄의 번호 -- 0부터 시작
-        GLfloat xTemp = x;
+        std::vector<std::u32string> lines;
+        std::u32string currentLine;
+
+        // Split text into lines
         for (auto c : text) {
-
-            if (c == U'\n') { // 개행문자 적용
-				currentLine++;
-				xTemp = x;
-				y -= getHeightPerLine();
-				continue;
-			} 
-
-            if (Characters.find(c) == Characters.end()) {
-                Characters[c] = LoadCharacter(face, c);
-            }
-            Character ch = Characters[c];
-
-            GLfloat xpos = xTemp + ch.Bearing.x * scale;
-            GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
-            GLfloat w = ch.Size.x * scale;
-            GLfloat h = ch.Size.y * scale;
-
-            GLfloat vertices[6][4] = 
-            {
-                { xpos,     ypos + h,   0.0f, 0.0f },
-                { xpos,     ypos,       0.0f, 1.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
-
-                { xpos,     ypos + h,   0.0f, 0.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
-                { xpos + w, ypos + h,   1.0f, 0.0f }
-            };
-
-            glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-
-            // Bind the buffer and map its memory
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            void* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-            if (ptr) {
-                memcpy(ptr, vertices, sizeof(vertices));
-                glUnmapBuffer(GL_ARRAY_BUFFER);
+            if (c == U'\n') {
+                lines.push_back(currentLine);
+                currentLine.clear();
             }
             else {
-                // Handle error
-                std::cerr << "Failed to map buffer" << std::endl;
+                currentLine += c;
             }
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-            xTemp += (ch.Advance >> 6) * scale;
         }
+        lines.push_back(currentLine); // Add the last line
+
+        GLfloat yTemp = y;
+
+        for (const auto& line : lines) {
+            // Calculate the width of the current line
+            GLfloat lineWidth = 0.0f;
+            for (auto c : line) {
+                if (Characters.find(c) == Characters.end()) {
+                    Characters[c] = LoadCharacter(face, c);
+                }
+                Character ch = Characters[c];
+                lineWidth += (ch.Advance >> 6) * scale;
+            }
+
+            // Calculate the starting x position for the current line to center it
+            GLfloat xTemp = x - lineWidth / 2.0f;
+
+            for (auto c : line) {
+                Character ch = Characters[c];
+
+                GLfloat xpos = xTemp + ch.Bearing.x * scale;
+                GLfloat ypos = yTemp - (ch.Size.y - ch.Bearing.y) * scale;
+
+                GLfloat w = ch.Size.x * scale;
+                GLfloat h = ch.Size.y * scale;
+
+                GLfloat vertices[6][4] =
+                {
+                    { xpos,     ypos + h,   0.0f, 0.0f },
+                    { xpos,     ypos,       0.0f, 1.0f },
+                    { xpos + w, ypos,       1.0f, 1.0f },
+
+                    { xpos,     ypos + h,   0.0f, 0.0f },
+                    { xpos + w, ypos,       1.0f, 1.0f },
+                    { xpos + w, ypos + h,   1.0f, 0.0f }
+                };
+
+                glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+
+                // Bind the buffer and map its memory
+                glBindBuffer(GL_ARRAY_BUFFER, VBO);
+                void* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+                if (ptr) {
+                    memcpy(ptr, vertices, sizeof(vertices));
+                    glUnmapBuffer(GL_ARRAY_BUFFER);
+                }
+                else {
+                    // Handle error
+                    std::cerr << "Failed to map buffer" << std::endl;
+                }
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+                xTemp += (ch.Advance >> 6) * scale;
+            }
+
+            yTemp -= getHeightPerLine() * 1.5; // Move y position down by line height for the next line
+        }
+
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
+
 
     // 표시되는 텍스트를 변경합니다.
     void setText(const std::u32string& text) 
