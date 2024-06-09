@@ -123,6 +123,57 @@ std::u32string intToChar32(const int i)
 
 FoodManager foodManager;
 
+class SkyCube
+{
+public:
+    SkyCube() = default;
+    SkyCube(string vs, string fs, string texturePath) :
+        shader(vs.c_str(), fs.c_str()), dataPath(texturePath)
+    {
+        std::cout << "[FoodCube] object created" << std::endl;
+
+        cube.addTexture(U"sky", dataPath);
+        cube.scale(15.f);
+        cube.translate(4.f, 5.f, 0.f);
+        
+        cube.initBuffers();
+    }
+    void setLightPos(glm::vec3 l) {
+        lightPos = l;
+    }
+
+    void setLightStrength(float s) {
+        lightStrength = s;
+    }
+
+    void draw() {
+        shader.use();
+        cube.switchTexture(U"sky");
+        projectionMatrix = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        viewMatrix = camera.GetViewMatrix();
+
+        // view/projection transformations
+        shader.setMat4("projection", projectionMatrix);
+        shader.setMat4("view", viewMatrix);
+
+        shader.setMat4("model", modelMatrix);
+        shader.setVec3("viewPos", camera.Position);
+        shader.setVec3("lightPosition", lightPos);
+        shader.setFloat("lightStrength", lightStrength);
+        cube.draw(&shader);
+
+    }
+private:
+    Cube cube;
+    Shader shader;
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 viewMatrix = camera.GetViewMatrix();
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+
+    string dataPath;
+    glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 1.0f); // light position
+    float lightStrength = 1.f; // light strength
+};
 class FoodCube
 {
 public:
@@ -130,6 +181,7 @@ public:
     FoodCube(string vs, string fs, string dataPath, bool isLeft) :
         shader(vs.c_str(), fs.c_str()), dataPath(dataPath)
     {
+        glEnable(GL_POLYGON_SMOOTH);
         std::cout << "[FoodCube] object created" << std::endl;
         for (int i = 0; i < foodManager.foods.size(); i++) {
             cube.addTexture(foodManager.foods[i].getName(), dataPath + foodManager.foods[i].getTexturefileName());
@@ -176,7 +228,7 @@ public:
 private:
     Cube cube;
 	Shader shader;
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(90.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 viewMatrix = camera.GetViewMatrix();
     glm::mat4 modelMatrix = glm::mat4(1.0f);
 
@@ -481,12 +533,10 @@ private:
 
 };
 Cat* cat;
-Obj3D* grass;
-Obj3D* bowlLeft;
-Obj3D* bowlRight;
 
 FoodCube* foodCubeRight;
 FoodCube* foodCubeLeft;
+SkyCube* skyCube;
 
 Text* mainText;
 Text* messageText;
@@ -526,18 +576,12 @@ int main()
 
     string vsText = sourceDirStr + "/text_render.vs"; // text용 vertex shader
     string fsText = sourceDirStr + "/text_render.fs"; // text용 fragment shader
-
+    string fsSkyCube = sourceDirStr + "/skycube.fs"; // sky cube fragment shader
     cat = new Cat(catModelPath, // model path
         vs, fs, // shaders
         1.f, 1.f, 1.f, // default scale
         0.f, glm::vec3(0.f, 0.f, 1.f), // default rotation
         0.f, -1.5f, 0.f // default translation
-    );
-
-    grass = new Obj3D("grass", grassPath, vs, fs, 
-        1.f, 1.f, 1.f,
-        0.f, glm::vec3(0.f, 1.f, 0.f),
-        0.f, 0.f, 0.f
     );
 
     
@@ -566,7 +610,7 @@ int main()
     foodCubeRight = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", false);
     foodCubeLeft = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", true);
     
-    
+    skyCube = new SkyCube(vsCube, fsSkyCube, dataDirStr + "/bg_full.jpg");
     // render loop
     // -----------
 
@@ -617,6 +661,8 @@ int main()
                 foodCubeLeft->setLightStrength(lightStrength);
                 foodCubeRight->setLightPos(glm::vec3(x, y, z));
                 foodCubeRight->setLightStrength(lightStrength);
+                skyCube->setLightPos(glm::vec3(x, y, z));
+                skyCube->setLightStrength(lightStrength);
                 glClearColor(0.894f , 0.882f , 0.875f * (lightStrength), 1.f);
                 if (secRemain <= 0) {
                     timerText->clearText();
@@ -908,11 +954,12 @@ int main()
         
         glCullFace(GL_FRONT);
         cat->draw();
+        skyCube->draw();
 
         glCullFace(GL_BACK);
         foodCubeLeft->draw();
         foodCubeRight->draw();
-
+        
         mainText->draw();
         messageText->draw();
         leftText->draw();
@@ -934,9 +981,6 @@ int main()
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     delete cat;
-    delete grass;
-    delete bowlLeft;
-    delete bowlRight;
     delete mainText;
     delete messageText;
     delete leftText;
@@ -947,6 +991,7 @@ int main()
 
     delete foodCubeRight;
     delete foodCubeLeft;
+    delete skyCube;
     glfwTerminate();
     return 0;
 }

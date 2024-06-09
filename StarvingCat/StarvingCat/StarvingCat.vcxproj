@@ -24,6 +24,7 @@
     <None Include="assimp-vc143-mt.dll" />
     <None Include="skel_anim.fs" />
     <None Include="skel_anim.vs" />
+    <None Include="skycube.fs" />
     <None Include="text_render.fs" />
     <None Include="text_render.vs" />
   </ItemGroup>
