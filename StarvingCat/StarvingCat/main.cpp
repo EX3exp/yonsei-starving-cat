@@ -23,7 +23,7 @@
 #include <stb_image.h>
 #include <unordered_map>
 
-glm::vec3 darkblue = glm::vec3(0.06, 0.08, 0.71);
+glm::vec3 darkblue = glm::vec3(0.06, 0.05, 0.71);
 // Source and Data directories
 string sourceDirStr = "C:/Users/inthe/Downloads/yonsei-starving-cat/StarvingCat/StarvingCat";
 string dataDirStr = "C:/Users/inthe/Downloads/yonsei-starving-cat/data";
@@ -42,8 +42,8 @@ void goToNextStage();
 // GLOBAL VARIABLES
 const double MAX_FRAMERATE_LIMIT = 1.0 / 60.0; // 현재 프레임레이트 -- 기본값은 60프레임
 
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 const int MAX_STAGE = 9;
 const int MIN_STAGE = 0;
@@ -133,8 +133,8 @@ public:
         std::cout << "[FoodCube] object created" << std::endl;
 
         cube.addTexture(U"sky", dataPath);
-        cube.scale(15.f);
-        cube.translate(4.f, 5.f, 0.f);
+        cube.scale(25.f);
+        cube.translate(0.f, 5.f, 0.f);
         
         cube.initBuffers();
     }
@@ -174,6 +174,75 @@ private:
     glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 1.0f); // light position
     float lightStrength = 1.f; // light strength
 };
+
+class GrassCube
+{
+public:
+    GrassCube() = default;
+    GrassCube(string vs, string fs, string diffuseTexturePath) :
+        shader(vs.c_str(), fs.c_str()), dataPath(diffuseTexturePath)
+    {
+        std::cout << "[GrassCube] object created" << std::endl;
+
+        cube1.addTexture(U"grass", dataPath);
+        cube1.scale(19.f);
+        cube1.translate(-10.f, -11.5f, 0.f);
+        cube1.initBuffers();
+
+        cube3.addTexture(U"grass", dataPath);
+        cube3.scale(19.f);
+        cube3.translate(10.f, -11.5f, 0.f);
+        cube3.initBuffers();
+
+        cube2.addTexture(U"grass", dataPath);
+        cube2.scale(19.f);
+        cube2.translate(0.f, -11.5f, 0.f);
+        cube2.initBuffers();
+
+        
+    }
+    void setLightPos(glm::vec3 l) {
+        lightPos = l;
+    }
+
+    void setLightStrength(float s) {
+        lightStrength = s;
+    }
+
+    void draw() {
+        shader.use();
+        cube1.switchTexture(U"grass");
+        cube2.switchTexture(U"grass");
+        cube3.switchTexture(U"grass");
+        projectionMatrix = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        viewMatrix = camera.GetViewMatrix();
+
+        // view/projection transformations
+        shader.setMat4("projection", projectionMatrix);
+        shader.setMat4("view", viewMatrix);
+
+        shader.setMat4("model", modelMatrix);
+        shader.setVec3("viewPos", camera.Position);
+        shader.setVec3("lightPosition", lightPos);
+        shader.setFloat("lightStrength", lightStrength);
+        cube1.draw(&shader);
+        cube2.draw(&shader);
+        cube3.draw(&shader);
+    }
+private:
+    Cube cube1;
+    Cube cube2;
+    Cube cube3;
+    Shader shader;
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 viewMatrix = camera.GetViewMatrix();
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+
+    string dataPath;
+    glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 1.0f); // light position
+    float lightStrength = 1.f; // light strength
+};
+
 class FoodCube
 {
 public:
@@ -490,20 +559,20 @@ public:
     {
         cout << "** changed motion - show result";
         if (!checkCanEat(food)) { // 먹을 수 없는 걸 먹음
-            cout << "eated: " << food.PrintName() << " -- cat will die" << endl;
+            cout << "eated: " << food.getTexturefileName().substr(0, food.getTexturefileName().size() - 4) << " -- cat will die" << endl;
             changeMotion(4);
 
             return false;
         }
         else { // 먹을 수 있는 걸 먹음
-            cout << "eated: " << food.PrintName() << " -- happy cat" << endl;
+            cout << "eated: " << food.getTexturefileName().substr(0, food.getTexturefileName().size() - 4) << " -- happy cat" << endl;
             changeMotion(2);
 
             return true;
         }
     }
 
-    void grow(float scaleIncrease = 1.1f) { // grow up, and reset Pos
+    void grow(float scaleIncrease = 1.08f) { // grow up, and reset Pos
         defaultScale *= scaleIncrease;
         changeDefaultTransformMatrix(defaultScale, defaultScale, defaultScale, defaultRotationAngle, defaultRotationAxis, defaultXtranslation, defaultYtranslation, defaultZtranslation);
         resetTransform();
@@ -537,6 +606,7 @@ Cat* cat;
 FoodCube* foodCubeRight;
 FoodCube* foodCubeLeft;
 SkyCube* skyCube;
+GrassCube* grassCube;
 
 Text* mainText;
 Text* messageText;
@@ -577,9 +647,10 @@ int main()
     string vsText = sourceDirStr + "/text_render.vs"; // text용 vertex shader
     string fsText = sourceDirStr + "/text_render.fs"; // text용 fragment shader
     string fsSkyCube = sourceDirStr + "/skycube.fs"; // sky cube fragment shader
+    string fsGrassCube = sourceDirStr + "/grasscube.fs"; // grass cube fragment shader
     cat = new Cat(catModelPath, // model path
         vs, fs, // shaders
-        1.f, 1.f, 1.f, // default scale
+        0.9f, 0.9f, 0.9f, // default scale
         0.f, glm::vec3(0.f, 0.f, 1.f), // default rotation
         0.f, -1.5f, 0.f // default translation
     );
@@ -592,14 +663,14 @@ int main()
     messageText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.6f, 0.7f);
 
     leftText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
-    leftText->setPos(SCR_WIDTH * 0.2f, SCR_HEIGHT * 0.1f, 0.8f);
+    leftText->setPos(SCR_WIDTH * 0.2f, SCR_HEIGHT * 0.13f, 0.9f);
 
     rightText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
-    rightText->setPos(SCR_WIDTH * 0.8f, SCR_HEIGHT * 0.1f, 0.8f);
+    rightText->setPos(SCR_WIDTH * 0.8f, SCR_HEIGHT * 0.13f, 0.9f);
 
 
     helperText = new Text(vsText, fsText, fontPath, textProjection, U"방향키를 눌러 음식을 먹으세요!", darkblue);
-    helperText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.1f, 0.4f);
+    helperText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.1f, 0.6f);
 
     titleText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
     titleText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.7f, 0.85f);
@@ -611,6 +682,8 @@ int main()
     foodCubeLeft = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", true);
     
     skyCube = new SkyCube(vsCube, fsSkyCube, dataDirStr + "/bg_full.jpg");
+
+    grassCube = new GrassCube(vsCube, fsGrassCube, dataDirStr + "/gdiffuse.jpg");
     // render loop
     // -----------
 
@@ -648,7 +721,7 @@ int main()
 				timerInitNeeded = false;
             }
             else if (!catEating && !isTimeOver) {
-                cout << "-";
+                // cout << "-";
                 double secRemain = (10.0 + timerOffset - now);
                 double angle = 2.0 * PI * (now - timerOffset) / 10.0; // 0에서 2pi 사이의 각도
                 double x = -cos(angle); // 코사인 값으로 x좌표 설정
@@ -663,6 +736,8 @@ int main()
                 foodCubeRight->setLightStrength(lightStrength);
                 skyCube->setLightPos(glm::vec3(x, y, z));
                 skyCube->setLightStrength(lightStrength);
+                grassCube->setLightPos(glm::vec3(x, y, z));
+                grassCube->setLightStrength(lightStrength);
                 glClearColor(0.894f , 0.882f , 0.875f * (lightStrength), 1.f);
                 if (secRemain <= 0) {
                     timerText->clearText();
@@ -714,7 +789,7 @@ int main()
                     cat->rotate(factor * 90.f, glm::vec3(0.f, 1.f, 0.f));
                 }
                 if (catMoving) { // 고양이 움직임
-                    cout << " - ";
+                    // cout << " - ";
                     catMovedTime = now - catMoveStartTime;
                     catMoveAmt = 0.03 * factor * sin(catMovedTime / 2.f * PI);
                     cat->translate(catMoveAmt, 0.f, 0.f);
@@ -771,7 +846,7 @@ int main()
                     cat->rotate(factor * -1.f * 90.f, glm::vec3(0.f, 1.f, 0.f));
                 }
                 if (catShowingResult) { // 고양이 반응
-                    cout << " - ";
+                    // cout << " - ";
 
                     if (now - catMoveStartTime >= 3) {
                         cout << "   stage will change or return to 1" << endl;
@@ -798,7 +873,7 @@ int main()
                     catStageTransitionStopFlag = false;
                 }
                 if (catStageTransitioning) { // 스테이지 전환
-                    cout << " - ";
+                    // cout << " - ";
                     if (isTimeOver) {
                         helperText->setText(U"해가 지고 말았습니다.");
                         rightText->clearText();
@@ -916,6 +991,7 @@ int main()
                     if (catMoveNext) {
                         if (stage == MAX_STAGE) {
                             helperText->clearText();
+                            cat->toDefaultMotion();
                             titleText->setText(U"게임 클리어!");
                             gameEndingFlag = true;
                             messageText->setText(U"축하합니다! 게임을 클리어했습니다.\n총 시도한 횟수: " + intToChar32(tryNum) + U"번");
@@ -959,7 +1035,8 @@ int main()
         glCullFace(GL_BACK);
         foodCubeLeft->draw();
         foodCubeRight->draw();
-        
+        grassCube->draw();
+
         mainText->draw();
         messageText->draw();
         leftText->draw();
@@ -967,11 +1044,7 @@ int main()
         helperText->draw();
         titleText->draw();
         timerText->draw();
-        
 
-        
-
-        // TODO 초원, 밥그릇, 밥 그리기, Lighting
 
         lastUpdateTime = now;
         glfwSwapBuffers(mainWindow);
@@ -992,6 +1065,7 @@ int main()
     delete foodCubeRight;
     delete foodCubeLeft;
     delete skyCube;
+    delete grassCube;
     glfwTerminate();
     return 0;
 }

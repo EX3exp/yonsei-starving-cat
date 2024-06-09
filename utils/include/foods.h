@@ -83,7 +83,7 @@ public:
         while (!isSelected) {
             
             randomNo = randomNumber(0, foods.size() - 1);
-            if (!(foods[randomNo].getMinStage() > stage) && usedFoods.find(foods[randomNo].getName()) == usedFoods.end() && ((isFirstTarget && foods[randomNo].isCanEat() != prevFoodCanEat)) || !isFirstTarget) {
+            if (!(foods[randomNo].getMinStage() > stage) && usedFoods.find(foods[randomNo].getName()) == usedFoods.end() && ((isFirstTarget && foods[randomNo].isCanEat() != prevFoodCanEat) || !isFirstTarget)) {
                 isSelected = true;
             }
                 

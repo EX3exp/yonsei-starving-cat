@@ -149,6 +149,8 @@ public:
         glBindVertexArray(0);
     };
 
+   
+
     void addTexture(const std::u32string& name, string texturePath) {
         unsigned int textureID;
         glGenTextures(1, &textureID);

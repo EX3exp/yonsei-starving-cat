@@ -22,6 +22,7 @@
     <None Include="cube.fs" />
     <None Include="cube.vs" />
     <None Include="assimp-vc143-mt.dll" />
+    <None Include="grasscube.fs" />
     <None Include="skel_anim.fs" />
     <None Include="skel_anim.vs" />
     <None Include="skycube.fs" />

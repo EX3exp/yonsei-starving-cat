@@ -25,7 +25,6 @@
 
 
 # Executables
-*.exe
 *.out
 *.app
 *.vsidx
@@ -34,7 +33,6 @@
 /StarvingCat/.vs
 /StarvingCat/StarvingCat/x64
 /StarvingCat/StarvingCat/x64/Debug
-*.pdb
 /StarvingCat/.vs/StarvingCat/v17
 StarvingCat/.vs/StarvingCat/v17/.suo
 StarvingCat/.vs/StarvingCat/v17/Browse.VC.db
