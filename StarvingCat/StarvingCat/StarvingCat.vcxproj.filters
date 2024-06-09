@@ -30,6 +30,12 @@
     <None Include="text_render.fs">
       <Filter>소스 파일</Filter>
     </None>
+    <None Include="cube.fs">
+      <Filter>소스 파일</Filter>
+    </None>
+    <None Include="cube.vs">
+      <Filter>소스 파일</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

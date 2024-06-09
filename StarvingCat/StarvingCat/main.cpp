@@ -38,8 +38,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
-void goToNextStage();
 void goToFirstStage();
+void goToNextStage();
 
 // GLOBAL VARIABLES
 const double MAX_FRAMERATE_LIMIT = 1.0 / 60.0; // 현재 프레임레이트 -- 기본값은 60프레임
@@ -120,6 +120,58 @@ std::u32string intToChar32(const int i)
     return { s.begin(), s.end() };
 }
 
+FoodManager foodManager;
+
+class FoodCube
+{
+public:
+    FoodCube() = default;
+    FoodCube(string vs, string fs, string dataPath, bool isLeft) :
+        shader(vs.c_str(), fs.c_str()), dataPath(dataPath)
+    {
+        std::cout << "[FoodCube] object created" << std::endl;
+        for (int i = 0; i < foodManager.foods.size(); i++) {
+            cube.addTexture(foodManager.foods[i].getName(), dataPath + foodManager.foods[i].getTexturefileName());
+        }
+        if (isLeft) {
+            cube.translate(-2.3f, -1.f, 0.0f);
+            cube.scale(0.9f);
+        }
+        else {
+            cube.translate(2.3f, -1.f, 0.0f);
+            cube.scale(0.9f);
+        }
+
+        cube.initBuffers();
+    }
+
+    void setFood(Food& food) {
+        cube.switchTexture(food.getName());
+    }
+
+    void draw() {
+        shader.use();
+		projectionMatrix = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		viewMatrix = camera.GetViewMatrix();
+
+		// view/projection transformations
+		shader.setMat4("projection", projectionMatrix);
+		shader.setMat4("view", viewMatrix);
+
+		shader.setMat4("model", modelMatrix);
+
+		cube.draw(&shader);
+	
+    }
+private:
+    Cube cube;
+	Shader shader;
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 viewMatrix = camera.GetViewMatrix();
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+
+    string dataPath;
+};
 // 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용 - 애니메이팅 적용되는 오브젝트의 경우 AnimatedObj3D 상속해야 함
 class Obj3D
 {
@@ -328,13 +380,11 @@ class Cat : public AnimatedObj3D
 {
 public:
     Cat() = default;
-    Cat(string modelPath, string walkMotionPath, string eatMotionPath, string joyMotionPath, string dieMotionPath,
+    Cat(string modelPath,
         string vertexShaderPath, string fragShaderPath,
         float defaultXScale = 0.5f, float defaultYScale = 0.5f, float defaultZScale = 0.5f,
         float defaultRotationAngle = 0.f, glm::vec3 defaultRotationAxis = glm::vec3(0.f, 1.f, 0.f),
         float defaultXtranslation = 0.f, float defaultYtranslation = 0.4f, float defaultZtranslation = 0.f) :
-        
-        walkMotionPath(walkMotionPath), eatMotionPath(eatMotionPath), dieMotionPath(dieMotionPath), joyMotionPath(joyMotionPath),
         defaultScale(defaultYScale), defaultRotationAngle(defaultRotationAngle), defaultRotationAxis(defaultRotationAxis),
         defaultXtranslation(defaultXtranslation), defaultYtranslation(defaultYtranslation), defaultZtranslation(defaultZtranslation),
         AnimatedObj3D("cat", modelPath, vertexShaderPath, fragShaderPath,
@@ -405,15 +455,14 @@ private:
 
     glm::mat4 initialTransformMatrix;
 
-    string walkMotionPath;
-    string eatMotionPath;
-    string joyMotionPath;
-    string dieMotionPath;
 };
 Cat* cat;
 Obj3D* grass;
 Obj3D* bowlLeft;
 Obj3D* bowlRight;
+
+FoodCube* foodCubeRight;
+FoodCube* foodCubeLeft;
 
 Text* mainText;
 Text* messageText;
@@ -421,7 +470,7 @@ Text* leftText;
 Text* rightText;
 Text* helperText;
 Text* titleText;
-FoodManager foodManager;
+
 Food foodRight; // 오른쪽 밥그릇에 있는 food
 Food foodLeft; // 왼쪽 밥그릇에 있는 food
 // TODO 밥그릇과 초원
@@ -435,13 +484,9 @@ int main()
     // load models
     // -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
-    string catModelPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 고양이 모델 경로 -- 모델, 기본 모션용
-    string catWalkPath = dataDirStr + "/ycat/gltfwalk/TuxCat.gltf"; // 걷는 고양이 모델 경로 -- 모션용
-    string catEatPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 먹는 고양이 모델 경로 -- 모션용
-    string catJoyPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 즐거운 고양이 모델 경로 -- 모션용
-    string catDiePath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
+    string catModelPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 고양이 모델 경로
 
-    string grassPath = dataDirStr + "/grass/scene.gltf"; // 초원 모델 경로
+    string grassPath = dataDirStr + "/grass/gltf/untitled.gltf"; // 초원 모델 경로
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
 
     // build and compile shaders
@@ -449,17 +494,24 @@ int main()
     string vs = sourceDirStr + "/skel_anim.vs"; // vertex shader
     string fs = sourceDirStr + "/skel_anim.fs"; // fragment shader
 
+    string vsCube = sourceDirStr + "/cube.vs"; // vertex shader
+    string fsCube = sourceDirStr + "/cube.fs"; // fragment shader
+
     string vsText = sourceDirStr + "/text_render.vs"; // text용 vertex shader
     string fsText = sourceDirStr + "/text_render.fs"; // text용 fragment shader
 
-    cat = new Cat(catModelPath, catWalkPath, catEatPath, catJoyPath, catDiePath, // models path
+    cat = new Cat(catModelPath, // model path
         vs, fs, // shaders
         1.f, 1.f, 1.f, // default scale
         0.f, glm::vec3(0.f, 0.f, 1.f), // default rotation
         0.f, -1.5f, 0.f // default translation
     );
 
-    grass = new Obj3D("grass", grassPath, vs, fs, 2.f, 2.f, 2.f, 0.f, glm::vec3(0.f, 1.f, 0.f), 0.f, -1.f, 0.f);
+    grass = new Obj3D("grass", grassPath, vs, fs, 
+        1.f, 1.f, 1.f,
+        0.f, glm::vec3(0.f, 1.f, 0.f),
+        0.f, 0.f, 0.f
+    );
 
     mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
     mainText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.9f, 1.0f);
@@ -479,6 +531,9 @@ int main()
 
     titleText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
     titleText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.7f, 0.85f);
+
+    foodCubeRight = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", false);
+    foodCubeLeft = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", true);
     //glEnable(GL_CULL_FACE); // cull face to reduce memory usage
     glClearColor(1.f, 1.f, 1.f, 1.0f);
     glEnable(GL_BLEND);
@@ -494,6 +549,8 @@ int main()
     foodManager.selectRandom(stage, foodLeft);
     leftText->setText(foodLeft.getName());
     rightText->setText(foodRight.getName());
+    foodCubeLeft->setFood(foodLeft);
+    foodCubeRight->setFood(foodRight);
     while (!glfwWindowShouldClose(mainWindow))
     {
         GLdouble now = glfwGetTime();
@@ -760,6 +817,8 @@ int main()
 
         // Draw
         cat->draw();
+        foodCubeLeft->draw();
+        foodCubeRight->draw();
         mainText->draw();
         messageText->draw();
         leftText->draw();
@@ -767,6 +826,8 @@ int main()
         helperText->draw();
         titleText->draw();
         grass->draw();
+
+
         // TODO 초원, 밥그릇, 밥 그리기, Lighting
 
         lastUpdateTime = now;
@@ -786,6 +847,9 @@ int main()
     delete rightText;
     delete helperText;
     delete titleText;
+
+    delete foodCubeRight;
+    delete foodCubeLeft;
     glfwTerminate();
     return 0;
 }
@@ -911,6 +975,8 @@ void goToFirstStage()
     foodManager.selectRandom(stage, foodLeft);
     leftText->setText(foodLeft.getName());
     rightText->setText(foodRight.getName());
+    foodCubeLeft->setFood(foodLeft);
+    foodCubeRight->setFood(foodRight);
 }
 
 void goToNextStage()
@@ -931,4 +997,6 @@ void goToNextStage()
     foodManager.selectRandom(stage, foodLeft);
     leftText->setText(foodLeft.getName());
     rightText->setText(foodRight.getName());
+    foodCubeLeft->setFood(foodLeft);
+    foodCubeRight->setFood(foodRight);
 }
