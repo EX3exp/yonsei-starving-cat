@@ -4,8 +4,7 @@
 		"version":"2.0"
 	},
 	"extensionsUsed":[
-		"KHR_materials_specular",
-		"KHR_materials_ior"
+		"KHR_materials_anisotropy"
 	],
 	"scene":0,
 	"scenes":[
@@ -10980,12 +10979,17 @@
 				"baseColorTexture":{
 					"index":3
 				},
-				"metallicFactor":0,
+				"metallicFactor":0.0981818214058876,
 				"roughnessFactor":0.5
 			}
 		},
 		{
 			"doubleSided":true,
+			"extensions":{
+				"KHR_materials_anisotropy":{
+					"anisotropyStrength":1
+				}
+			},
 			"name":"Ears",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
@@ -11008,24 +11012,12 @@
 		},
 		{
 			"doubleSided":true,
-			"extensions":{
-				"KHR_materials_specular":{
-					"specularColorFactor":[
-						0.23663407564163208,
-						0.23663407564163208,
-						0.23663407564163208
-					]
-				},
-				"KHR_materials_ior":{
-					"ior":1.4500000476837158
-				}
-			},
 			"name":"NormalBlackFur",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":6
 				},
-				"metallicFactor":0,
+				"metallicFactor":0.20000000298023224,
 				"roughnessFactor":0.5
 			}
 		}
@@ -11157,19 +11149,19 @@
 			"source":0
 		},
 		{
-			"sampler":0,
+			"sampler":1,
 			"source":0
 		},
 		{
-			"sampler":0,
+			"sampler":1,
 			"source":0
 		},
 		{
-			"sampler":0,
+			"sampler":1,
 			"source":0
 		},
 		{
-			"sampler":0,
+			"sampler":1,
 			"source":0
 		}
 	],
@@ -21215,6 +21207,12 @@
 		{
 			"magFilter":9729,
 			"minFilter":9987
+		},
+		{
+			"magFilter":9729,
+			"minFilter":9987,
+			"wrapS":33071,
+			"wrapT":33071
 		}
 	],
 	"buffers":[

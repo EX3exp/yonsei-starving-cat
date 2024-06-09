@@ -36,7 +36,7 @@ public:
 	
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const &path, bool gamma = true) : gammaCorrection(gamma)
+    Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
     {
         loadModel(path);
     }
@@ -63,7 +63,7 @@ private:
         // read file via ASSIMP
         Assimp::Importer importer;
 
-		unsigned int flags = aiProcess_Triangulate | aiProcess_DropNormals | aiProcess_GenNormals;
+		unsigned int flags = aiProcess_Triangulate | aiProcess_DropNormals | aiProcess_GenSmoothNormals;
 
         const aiScene* scene = importer.ReadFile(path, flags);
         // check for errors

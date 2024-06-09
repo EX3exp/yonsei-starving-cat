@@ -179,6 +179,7 @@ public:
 
         sendTransformsToShader();
         shader.setMat4("model", modelMatrix);
+        shader.setVec3("viewPos", camera.Position);
 
         model.Draw(shader);
     }
@@ -445,11 +446,11 @@ int main()
     // load models
     // -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
-    string catModelPath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 고양이 모델 경로 -- 모델, 기본 모션용
-    string catWalkPath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 걷는 고양이 모델 경로 -- 모션용
-    string catEatPath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 먹는 고양이 모델 경로 -- 모션용
-    string catJoyPath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 즐거운 고양이 모델 경로 -- 모션용
-    string catDiePath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
+    string catModelPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 고양이 모델 경로 -- 모델, 기본 모션용
+    string catWalkPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 걷는 고양이 모델 경로 -- 모션용
+    string catEatPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 먹는 고양이 모델 경로 -- 모션용
+    string catJoyPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 즐거운 고양이 모델 경로 -- 모션용
+    string catDiePath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
 
     string grassPath = dataDirStr + "/grass/scene.gltf"; // 초원 모델 경로
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
@@ -469,7 +470,7 @@ int main()
         0.f, -1.f, 0.f // default translation
     );
 
-    grass = new Obj3D("grass", grassPath, vs, fs, 2.f, 2.f, 2.f);
+    grass = new Obj3D("grass", grassPath, vs, fs, 2.f, 2.f, 2.f, 0.f, glm::vec3(0.f, 1.f, 0.f), 0.f, -1.f, 0.f);
 
     mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
     mainText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.9f, 1.0f);

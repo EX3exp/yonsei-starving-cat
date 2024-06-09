@@ -19,8 +19,7 @@ uniform mat4 finalBonesMatrices[MAX_BONES];
 out vec2 TexCoords;
 out vec3 FragPos;
 out vec3 Normal;
-out vec3 Tangent;
-out vec3 Bitangent;
+
 
 void main()
 {
@@ -44,8 +43,7 @@ void main()
 	
     FragPos = vec3(model * vec4(pos, 1.0));
     Normal = mat3(transpose(inverse(model))) * totalNormal;
-    Tangent = mat3(transpose(inverse(model))) * tangent;
-    Bitangent = mat3(transpose(inverse(model))) * bitangent;
+
     
     mat4 viewModel = view * model;
     gl_Position =  projection * viewModel * totalPosition;
