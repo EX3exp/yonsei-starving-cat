@@ -1,6 +1,4 @@
-﻿// 24-06-04 파일 경로 관련 이슈 수정 (운영체제에 상관없이 그냥 돌리시면 됩니다....)
-// 
-// <디버그 폴더 내에 리소스 파일을 붙여넣어야 할 경우>:
+﻿// <디버그 폴더 내에 리소스 파일을 붙여넣어야 할 경우>:
 // (수동으로 복붙하지 마시고)
 // 프로젝트 속성 >> 빌드 후 이벤트
 // 명령줄에 `copy "$(ProjectDir)<추가할 파일>" "$(OutDir)" ` 을 추가해 주세요
@@ -147,6 +145,13 @@ public:
 
         cube.initBuffers();
     }
+    void setLightPos(glm::vec3 l) {
+        lightPos = l;
+    }
+
+    void setLightStrength(float s) {
+        lightStrength = s;
+    }
 
     void setFood(Food& food) {
         cube.switchTexture(food.getName());
@@ -162,7 +167,9 @@ public:
 		shader.setMat4("view", viewMatrix);
 
 		shader.setMat4("model", modelMatrix);
-
+        shader.setVec3("viewPos", camera.Position);
+        shader.setVec3("lightPosition", lightPos);
+        shader.setFloat("lightStrength", lightStrength);
 		cube.draw(&shader);
 	
     }
@@ -174,6 +181,8 @@ private:
     glm::mat4 modelMatrix = glm::mat4(1.0f);
 
     string dataPath;
+    glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 1.0f); // light position
+    float lightStrength = 1.f; // light strength
 };
 // 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용 - 애니메이팅 적용되는 오브젝트의 경우 AnimatedObj3D 상속해야 함
 class Obj3D
@@ -497,7 +506,7 @@ int main()
 
     glEnable(GL_CULL_FACE);
     
-    glClearColor(0.894f, 0.882f, 0.875f, 1.f);
+    
     GLfloat catMoveAmt; // 왼쪽 밥그릇 먹을 때엔 감소, 오른쪽 밥그릇 먹을 때엔 증가
     // load models
     // -----------
@@ -577,18 +586,20 @@ int main()
     {
         GLdouble now = glfwGetTime();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
         
         // 프레임에 맞춰서 인풋 받고 게임 진행 
         if ((now - lastFrameTime) >= MAX_FRAMERATE_LIMIT)
         {
+            
             float factor = (catMovingLeft ? -1.f : 1.f);
 
             if (gameEndingFlag) {
                 // 게임 종료 연출
-				
+                glClearColor(0.894f, 0.882f, 0.875f, 1.f);
             }
             else if (timerInitNeeded) {
+                glClearColor(0.894f, 0.882f, 0.875f, 1.f);
                 timerOffset = now;
 				timerInitNeeded = false;
             }
@@ -602,7 +613,11 @@ int main()
                 float lightStrength = std::min(1.0, secRemain / 10.0 + 0.3);
                 cat->setLightPos(glm::vec3(x, y, z));
                 cat->setLightStrength(lightStrength);
-
+                foodCubeLeft->setLightPos(glm::vec3(x, y, z));
+                foodCubeLeft->setLightStrength(lightStrength);
+                foodCubeRight->setLightPos(glm::vec3(x, y, z));
+                foodCubeRight->setLightStrength(lightStrength);
+                glClearColor(0.894f , 0.882f , 0.875f * (lightStrength), 1.f);
                 if (secRemain <= 0) {
                     timerText->clearText();
                     isTimeOver = true;
@@ -1009,17 +1024,6 @@ void processInput(GLFWwindow* window)
             helperText->setText(U"[System] 오른쪽 음식을 먹었다!");
         }
     }
-
-    /*
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-     */
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
