@@ -544,7 +544,7 @@ int main()
                 if (catMoving) { // 고양이 움직임
                     cout << " - ";
                     catMovedTime = now - catMoveStartTime;
-                    catMoveAmt = 0.015 * factor * sin(catMovedTime / 2.f * PI);
+                    catMoveAmt = 0.08 * factor * sin(catMovedTime / 2.f * PI);
                     cat->translate(catMoveAmt, 0.f, 0.f);
                     if (now - catMoveStartTime >= 2) {
                         cout << "   cat will Stop" << endl;
@@ -701,6 +701,7 @@ int main()
                 if (catStageEndFlag) { // 스테이지 종료 준비 
                     cout << "   going to next stage" << endl;
                     // starts eat at next frame
+                    cat->changeMotion(0);
                     catStageEndingStartTime = now;
                     catStageEndFlag = false;
                     catStageEnding = true;
