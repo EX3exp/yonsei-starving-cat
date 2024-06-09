@@ -55,7 +55,8 @@ const int MIN_STAGE = 0;
 static int stage; // stage, 0~9
 static float catSize; // stage가 늘 때마다 증가 TODO cat scale 적용
 
-// starg flags
+// start flags
+static bool timerInitNeeded = true; // 타이머 초기화가 필요할 시 true
 static bool catMoveFlag = false; // true면 고양이의 위치를 catMoveAmt만큼 움직임 
 static bool catStopAndEatFlag = false; // true일 경우 고양이가 멈춰서 먹고 음식 종류에 따라 반응
 static bool catShowResultFlag = false; // true면 고양이의 반응 보여줌
@@ -64,6 +65,7 @@ static bool catMoveNext = false; // true면 다음 스테이지로 이동하거�
 static bool gameEndingFlag = false; // true일 경우 게임 종료 연출 -- 게임 진행 안함
 static bool catStageEndFlag = false; // true일 경우 스테이지 종료 연출 
 
+static bool isTimeOver = false; // true일 경우 시간이 다 됨 -- catEating이 False일 때 true로 바뀌면 게임 강제 종료
 // stop flags
 static bool catMoveStopFlag = false; // true면 고양이 위치가 다 이동했다고 간주
 static bool catStopAndEatStopFlag = false;
@@ -86,6 +88,7 @@ static double catStopAndEatTime = 0.0; // [초기 이동 후 음식 먹음] 고�
 static double catShowResultTime = 0.0; // [초기 이동 후 음식 먹고 반응] 고양이 반응 모션 시간
 static double catStageTransitionTime = 0.0;
 static double catStageEndingTime = 0.0;
+
 // start time
 static double catMoveStartTime = 0.0; // 고양이가 움직이기 시작한 시간
 static double catStopAndEatStartTime = 0.0; // 고양이가 마지막으로 음식먹는 움직임을 한 시간
@@ -233,8 +236,18 @@ public:
         shader.setMat4("model", modelMatrix);
         shader.setVec3("viewPos", camera.Position);
 
+        shader.setVec3("lightPosition", lightPos);
+        shader.setFloat("lightStrength", lightStrength);
         model.Draw(shader);
     }
+
+    void setLightPos(glm::vec3 l) {
+        lightPos = l;
+    }
+
+    void setLightStrength(float s) {
+		lightStrength = s;
+	} 
 
 
     virtual void updateAnimation()
@@ -302,6 +315,8 @@ protected:
     glm::mat4 lastScaleMatrix = glm::mat4(1.0f); // scale
     glm::mat4 lastRotateMatrix = glm::mat4(1.0f); // rotate
 
+    glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 1.0f); // light position
+    float lightStrength = 1.f; // light strength
 };
 
 // 애니메이팅되는 3d 모델 오브젝트들은 모두 이 클래스를 상속받아서 사용
@@ -470,6 +485,7 @@ Text* leftText;
 Text* rightText;
 Text* helperText;
 Text* titleText;
+Text* timerText;
 
 Food foodRight; // 오른쪽 밥그릇에 있는 food
 Food foodLeft; // 왼쪽 밥그릇에 있는 food
@@ -535,6 +551,9 @@ int main()
     titleText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
     titleText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.7f, 0.85f);
 
+
+    timerText = new Text(vsText, fsText, fontPath, textProjection, U"0", darkblue);
+    timerText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.6f, 0.85f);
     foodCubeRight = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", false);
     foodCubeLeft = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", true);
     
@@ -552,12 +571,14 @@ int main()
     rightText->setText(foodRight.getName());
     foodCubeLeft->setFood(foodLeft);
     foodCubeRight->setFood(foodRight);
+    double timerOffset = 0.0;
+
     while (!glfwWindowShouldClose(mainWindow))
     {
         GLdouble now = glfwGetTime();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+        
         // 프레임에 맞춰서 인풋 받고 게임 진행 
         if ((now - lastFrameTime) >= MAX_FRAMERATE_LIMIT)
         {
@@ -567,6 +588,39 @@ int main()
                 // 게임 종료 연출
 				
             }
+            else if (timerInitNeeded) {
+                timerOffset = now;
+				timerInitNeeded = false;
+            }
+            else if (!catEating && !isTimeOver) {
+                cout << "-";
+                double secRemain = (10.0 + timerOffset - now);
+                double angle = 2.0 * PI * (now - timerOffset) / 10.0; // 0에서 2pi 사이의 각도
+                double x = -cos(angle); // 코사인 값으로 x좌표 설정
+                double y = -sin(angle);
+                double z = 0.0;
+                float lightStrength = std::min(1.0, secRemain / 10.0 + 0.3);
+                cat->setLightPos(glm::vec3(x, y, z));
+                cat->setLightStrength(lightStrength);
+
+                if (secRemain <= 0) {
+                    timerText->clearText();
+                    isTimeOver = true;
+					
+                }
+                if (secRemain > 5) {
+                    timerText->setText(U"남은 시간: " + intToChar32((int)secRemain));
+                }
+                else {
+                    timerText->setText(U"남은 시간: " + intToChar32((int)secRemain), true);
+                }
+			}
+            else if (!catEating && isTimeOver) {
+				// 시간이 다 됨
+                catStageTransitionFlag = true;
+                catMoveNext = false;
+                catEating = true;
+			}
             else {
                 // ----------
                 // 고양이 모션 - 1. 밥그릇 위치까지 움직임
@@ -676,6 +730,7 @@ int main()
                 if (catStageTransitionFlag) { // 스테이지 전환 준비 
                     cout << "   going to next stage" << endl;
                     // starts eat at next frame
+                    timerText->clearText();
                     catStageTransitionStartTime = now;
                     catStageTransitionFlag = false;
                     catStageTransitioning = true;
@@ -683,7 +738,18 @@ int main()
                 }
                 if (catStageTransitioning) { // 스테이지 전환
                     cout << " - ";
-                    if (catMoveNext) {
+                    if (isTimeOver) {
+                        helperText->setText(U"해가 지고 말았습니다.");
+                        rightText->clearText();
+                        leftText->clearText();
+                        if (now - catStageTransitionStartTime >= 2.f) {
+                            cout << "   cat will go next" << endl;
+                            // stops move at next frame
+                            catStageTransitionStopFlag = true;
+                            catStageTransitioning = false;
+                        }
+                    }
+                    else if (catMoveNext) {
                         helperText->setText(U"맛있었다.");
                         rightText->clearText();
                         leftText->clearText();
@@ -705,6 +771,7 @@ int main()
                     else {
                         rightText->clearText();
                         leftText->clearText();
+
                         helperText->setText(U"으윽, 이건!", true);
                         if (catMovingLeft) {
                             titleText->setText(foodLeft.getName(), true);
@@ -744,8 +811,15 @@ int main()
                     }
                     else {
                         titleText->setText(U"최고기록: " + intToChar32(maxRecord + 1) + U" 스테이지", true);
+
                         helperText->clearText();
-                        messageText->setText(U"이런, 죽어버렸다... \n1스테이지로 다시 돌아갑니다.", true);
+                        if (isTimeOver) {
+                            timerText->clearText();
+                            messageText->setText(U"너무 음식을 늦게 골랐어요! 굶어 죽고 말았습니다... \n1스테이지로 다시 돌아갑니다.", true);
+                        }
+                        else {
+                            messageText->setText(U"이런, 죽어버렸다... \n1스테이지로 다시 돌아갑니다.", true);
+                        }
                         cat->resetToRetry();
                         catStageTransitionStopFlag = false;
                         catStageEndFlag = true;
@@ -823,12 +897,14 @@ int main()
         glCullFace(GL_BACK);
         foodCubeLeft->draw();
         foodCubeRight->draw();
+
         mainText->draw();
         messageText->draw();
         leftText->draw();
         rightText->draw();
         helperText->draw();
         titleText->draw();
+        timerText->draw();
         
 
         
@@ -852,6 +928,7 @@ int main()
     delete rightText;
     delete helperText;
     delete titleText;
+    delete timerText;
 
     delete foodCubeRight;
     delete foodCubeLeft;
@@ -982,6 +1059,10 @@ void goToFirstStage()
     rightText->setText(foodRight.getName());
     foodCubeLeft->setFood(foodLeft);
     foodCubeRight->setFood(foodRight);
+
+    timerText->clearText();
+    isTimeOver = false;
+    timerInitNeeded = true;
 }
 
 void goToNextStage()
@@ -1004,4 +1085,8 @@ void goToNextStage()
     rightText->setText(foodRight.getName());
     foodCubeLeft->setFood(foodLeft);
     foodCubeRight->setFood(foodRight);
+    
+    timerText->clearText();
+    isTimeOver = false;
+    timerInitNeeded = true;
 }

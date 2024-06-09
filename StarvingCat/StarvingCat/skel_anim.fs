@@ -64,8 +64,8 @@ in vec3 Normal;
 uniform sampler2D texture_diffuse1;
 
 uniform vec3 viewPos;
-
-
+uniform vec3 lightPosition;
+uniform float lightStrength;
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
@@ -83,12 +83,21 @@ void main()
     dirLight.diffuse = vec3(0.9f);
     dirLight.specular = vec3(1.f);
 
+    PointLight pointLight;
+    pointLight.position = lightPosition;
+    pointLight.ambient = vec3(0.9f);
+    pointLight.diffuse = vec3(0.9f);
+    pointLight.specular = vec3(1.f);
+    pointLight.constant = 1.0f;
+    pointLight.linear = 0.09f;
+    pointLight.quadratic = 0.032f;
+
 
     vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 viewDir = normalize(lightPosition - FragPos);
     
-
-    vec3 result = CalcDirLight(dirLight, norm, viewDir);
+    
+    vec3 result = CalcDirLight(dirLight, norm, viewDir) * lightStrength;
     FragColor = vec4(result, 1.0f);
 }
 

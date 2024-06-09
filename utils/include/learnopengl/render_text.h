@@ -75,7 +75,12 @@ public:
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         shader.use();
-        shader.setVec3("textColor", color);
+        if (isurgent) {
+            shader.setVec3("textColor", glm::vec3(0.55f, 0.09f, 0.09f)); // scarlet
+        }
+        else {
+            shader.setVec3("textColor", color);
+        }
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
 
