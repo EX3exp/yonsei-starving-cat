@@ -4,7 +4,9 @@
 		"version":"2.0"
 	},
 	"extensionsUsed":[
-		"KHR_materials_anisotropy"
+		"KHR_materials_anisotropy",
+		"KHR_materials_specular",
+		"KHR_materials_ior"
 	],
 	"scene":0,
 	"scenes":[
@@ -10965,12 +10967,9 @@
 			"doubleSided":true,
 			"name":"EyeHighlight",
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.800000011920929,
-					0.800000011920929,
-					0.800000011920929,
-					1
-				],
+				"baseColorTexture":{
+					"index":2
+				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
 			}
@@ -10980,7 +10979,7 @@
 			"name":"NormalFur",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":2
+					"index":3
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
@@ -10996,7 +10995,7 @@
 			"name":"Ears",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":3
+					"index":4
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
@@ -11007,7 +11006,7 @@
 			"name":"Collar",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":4
+					"index":5
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
@@ -11015,10 +11014,18 @@
 		},
 		{
 			"doubleSided":true,
+			"extensions":{
+				"KHR_materials_specular":{
+					"specularFactor":0
+				},
+				"KHR_materials_ior":{
+					"ior":23.599998474121094
+				}
+			},
 			"name":"NormalBlackFur",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":5
+					"index":6
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
@@ -11148,6 +11155,10 @@
 			"source":0
 		},
 		{
+			"sampler":0,
+			"source":0
+		},
+		{
 			"sampler":1,
 			"source":0
 		},
@@ -11161,7 +11172,7 @@
 		},
 		{
 			"sampler":0,
-			"source":0
+			"source":1
 		}
 	],
 	"images":[
@@ -11169,6 +11180,11 @@
 			"mimeType":"image/png",
 			"name":"cat_Diffuse",
 			"uri":"textures/cat_Diffuse.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"yblue",
+			"uri":"textures/yblue.png"
 		}
 	],
 	"skins":[

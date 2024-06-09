@@ -30,6 +30,8 @@ public:
     Text(const std::string& vertexShaderPath, const std::string& fragShaderPath, const std::string& fontPath, const glm::mat4& projection, const std::u32string& text, glm::vec3 &color)
         : shader(vertexShaderPath.c_str(), fragShaderPath.c_str()), projectionMatrix(projection), text(text), color(color)
     {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         lineNum = 0; // 줄의 개수, 줄이 바꿔질 때마다 1씩 더해짐 - 최소값은 1
         shader.use();
         shader.setMat4("projection", projectionMatrix);
@@ -47,7 +49,7 @@ public:
         FT_Set_Pixel_Sizes(face, 0, 48);
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
+        
         // Ensure an unicode character map is loaded
         FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 
@@ -70,15 +72,10 @@ public:
 
     void draw()
     {
-        
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         shader.use();
-
-        if (isurgent) {
-            shader.setVec3("textColor", glm::vec3(0.55f, 0.09f, 0.09f)); // scarlet
-        }
-        else {
-            shader.setVec3("textColor", color);
-        }
+        shader.setVec3("textColor", color);
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
 
@@ -97,16 +94,7 @@ public:
         }
         lines.push_back(currentLine); // Add the last line
 
-        GLfloat yTemp;
-        if (lines.size() > 1) {
-            GLfloat totalHeight = lines.size() * getHeightPerLine() * 1.5; // Total height of the text
-            GLfloat yStart = y - totalHeight / 3.0f;
-            yTemp = yStart;
-		}
-        else {
-            yTemp = y;
-		}
-        
+        GLfloat yTemp = y;
 
         for (const auto& line : lines) {
             // Calculate the width of the current line
@@ -121,7 +109,7 @@ public:
 
             // Calculate the starting x position for the current line to center it
             GLfloat xTemp = x - lineWidth / 2.0f;
-            
+
             for (auto c : line) {
                 Character ch = Characters[c];
 
@@ -143,33 +131,6 @@ public:
                 };
 
                 glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-
-                
-                // Draw the character with multiple offsets to simulate bold effect
-                GLfloat boldOffset = 0.2f; // Adjust this value for more or less boldness
-                for (GLfloat dx = -boldOffset; dx <= boldOffset; dx += boldOffset) {
-                    for (GLfloat dy = -boldOffset; dy <= boldOffset; dy += boldOffset) {
-                        // Update vertex positions with offsets
-                        for (int i = 0; i < 6; ++i) {
-                            vertices[i][0] += dx;
-                            vertices[i][1] += dy;
-                        }
-
-                        // Bind the buffer and map its memory
-                        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-                        void* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-                        if (ptr) {
-                            memcpy(ptr, vertices, sizeof(vertices));
-                            glUnmapBuffer(GL_ARRAY_BUFFER);
-                        }
-                        else {
-                            // Handle error
-                            std::cerr << "Failed to map buffer" << std::endl;
-                        }
-                        glBindBuffer(GL_ARRAY_BUFFER, 0);
-                        glDrawArrays(GL_TRIANGLES, 0, 6);
-                    }
-                }
 
                 // Bind the buffer and map its memory
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -281,7 +242,7 @@ private:
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            GL_RED,
+            GL_RGBA,
             face->glyph->bitmap.width,
             face->glyph->bitmap.rows,
             0,
@@ -292,8 +253,8 @@ private:
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
 
         Character character = {
             texture,

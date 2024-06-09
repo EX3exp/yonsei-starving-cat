@@ -63,7 +63,9 @@ private:
         // read file via ASSIMP
         Assimp::Importer importer;
 
-		unsigned int flags = aiProcess_Triangulate | aiProcess_DropNormals | aiProcess_GenSmoothNormals;
+		unsigned int flags = aiProcess_Triangulate | aiProcess_DropNormals | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace |
+			aiProcess_OptimizeMeshes |
+			aiProcess_OptimizeGraph | aiProcess_ImproveCacheLocality;
 
         const aiScene* scene = importer.ReadFile(path, flags);
         // check for errors

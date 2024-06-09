@@ -134,11 +134,11 @@ public:
             cube.addTexture(foodManager.foods[i].getName(), dataPath + foodManager.foods[i].getTexturefileName());
         }
         if (isLeft) {
-            cube.translate(-2.3f, -1.f, 0.0f);
+            cube.translate(-2.5f, -1.f, -0.5f);
             cube.scale(0.9f);
         }
         else {
-            cube.translate(2.3f, -1.f, 0.0f);
+            cube.translate(2.5f, -1.f, -0.5f);
             cube.scale(0.9f);
         }
 
@@ -479,7 +479,9 @@ int main()
 {
     mainWindow = glAllInit();
 
-
+    glEnable(GL_CULL_FACE);
+    
+    glClearColor(0.894f, 0.882f, 0.875f, 1.f);
     GLfloat catMoveAmt; // 왼쪽 밥그릇 먹을 때엔 감소, 오른쪽 밥그릇 먹을 때엔 증가
     // load models
     // -----------
@@ -513,6 +515,7 @@ int main()
         0.f, 0.f, 0.f
     );
 
+    
     mainText = new Text(vsText, fsText, fontPath, textProjection, U"Stage" + intToChar32(stage + 1), darkblue);
     mainText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.9f, 1.0f);
 
@@ -534,10 +537,8 @@ int main()
 
     foodCubeRight = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", false);
     foodCubeLeft = new FoodCube(vsCube, fsCube, dataDirStr + "/food_img/", true);
-    //glEnable(GL_CULL_FACE); // cull face to reduce memory usage
-    glClearColor(1.f, 1.f, 1.f, 1.0f);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    
     // render loop
     // -----------
 
@@ -554,7 +555,6 @@ int main()
     while (!glfwWindowShouldClose(mainWindow))
     {
         GLdouble now = glfwGetTime();
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -601,7 +601,7 @@ int main()
                 if (catMoving) { // 고양이 움직임
                     cout << " - ";
                     catMovedTime = now - catMoveStartTime;
-                    catMoveAmt = 0.08 * factor * sin(catMovedTime / 2.f * PI);
+                    catMoveAmt = 0.03 * factor * sin(catMovedTime / 2.f * PI);
                     cat->translate(catMoveAmt, 0.f, 0.f);
                     if (now - catMoveStartTime >= 2) {
                         cout << "   cat will Stop" << endl;
@@ -816,7 +816,11 @@ int main()
         }
 
         // Draw
+        
+        glCullFace(GL_FRONT);
         cat->draw();
+
+        glCullFace(GL_BACK);
         foodCubeLeft->draw();
         foodCubeRight->draw();
         mainText->draw();
@@ -825,8 +829,9 @@ int main()
         rightText->draw();
         helperText->draw();
         titleText->draw();
-        grass->draw();
+        
 
+        
 
         // TODO 초원, 밥그릇, 밥 그리기, Lighting
 
