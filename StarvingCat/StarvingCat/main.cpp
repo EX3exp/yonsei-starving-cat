@@ -16,7 +16,6 @@
 #include <learnopengl/camera.h>
 #include <learnopengl/animator.h>
 #include <learnopengl/model_animation.h>
-#include <learnopengl/model.h>
 #include <iostream>
 #include <foods.h>
 #include <cube.h>
@@ -446,13 +445,13 @@ int main()
     // load models
     // -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
-    string catModelPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 고양이 모델 경로 -- 모델, 기본 모션용
-    string catWalkPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 걷는 고양이 모델 경로 -- 모션용
-    string catEatPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 먹는 고양이 모델 경로 -- 모션용
-    string catJoyPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 즐거운 고양이 모델 경로 -- 모션용
-    string catDiePath = dataDirStr + "/cat/dae/TuxCat.dae"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
+    string catModelPath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 고양이 모델 경로 -- 모델, 기본 모션용
+    string catWalkPath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 걷는 고양이 모델 경로 -- 모션용
+    string catEatPath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 먹는 고양이 모델 경로 -- 모션용
+    string catJoyPath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 즐거운 고양이 모델 경로 -- 모션용
+    string catDiePath = dataDirStr + "/cat/gltf/TuxCat.gltf"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
 
-    string grassPath = dataDirStr + "/cat/dae/TuxCat.dae"; // 초원 모델 경로
+    string grassPath = dataDirStr + "/grass/scene.gltf"; // 초원 모델 경로
     //string modelPath = modelDirStr + "/chapa/dae/Chapa-Giratoria.dae";
 
     // build and compile shaders
@@ -466,7 +465,7 @@ int main()
     cat = new Cat(catModelPath, catWalkPath, catEatPath, catJoyPath, catDiePath, // models path
         vs, fs, // shaders
         1.f, 1.f, 1.f, // default scale
-        180.f, glm::vec3(0.f, 1.f, 0.f), // default rotation
+        0.f, glm::vec3(0.f, 0.f, 1.f), // default rotation
         0.f, -1.f, 0.f // default translation
     );
 
@@ -490,7 +489,7 @@ int main()
 
     titleText = new Text(vsText, fsText, fontPath, textProjection, U"", darkblue);
     titleText->setPos(SCR_WIDTH * 0.5f, SCR_HEIGHT * 0.7f, 0.85f);
-    glEnable(GL_CULL_FACE); // cull face to reduce memory usage
+    //glEnable(GL_CULL_FACE); // cull face to reduce memory usage
     glClearColor(1.f, 1.f, 1.f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
