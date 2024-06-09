@@ -304,10 +304,10 @@ public:
         reset();
     }
 
-    void changeMotion(string newMotionPath)
+    void changeMotion(int motionNo)
     {
-        cout << "changed motion -- " << newMotionPath << endl;
-        anim = Animation(newMotionPath, &model);
+        cout << "changed motion -- " << motionNo << endl;
+        anim = Animation(modelPath, &model, motionNo);
         animator = Animator(&anim);
         transformsMatrixes = animator.GetFinalBoneMatrices();
         originalTransformsMatrixes = animator.GetFinalBoneMatrices();
@@ -315,14 +315,6 @@ public:
 
     }
 
-    void changeMotion(Animation anim)
-    {
-        cout << "changed motion -- ";
-        animator = Animator(&anim);
-        transformsMatrixes = animator.GetFinalBoneMatrices();
-        originalTransformsMatrixes = animator.GetFinalBoneMatrices();
-        reset();
-    }
 protected:
     Animation anim{ modelPath, &model };
     Animator animator{ &anim };
@@ -341,28 +333,31 @@ public:
         float defaultXScale = 0.5f, float defaultYScale = 0.5f, float defaultZScale = 0.5f,
         float defaultRotationAngle = 0.f, glm::vec3 defaultRotationAxis = glm::vec3(0.f, 1.f, 0.f),
         float defaultXtranslation = 0.f, float defaultYtranslation = 0.4f, float defaultZtranslation = 0.f) :
+        
+        walkMotionPath(walkMotionPath), eatMotionPath(eatMotionPath), dieMotionPath(dieMotionPath), joyMotionPath(joyMotionPath),
+        defaultScale(defaultYScale), defaultRotationAngle(defaultRotationAngle), defaultRotationAxis(defaultRotationAxis),
+        defaultXtranslation(defaultXtranslation), defaultYtranslation(defaultYtranslation), defaultZtranslation(defaultZtranslation),
         AnimatedObj3D("cat", modelPath, vertexShaderPath, fragShaderPath,
             defaultXScale, defaultYScale, defaultZScale,
             defaultRotationAngle, defaultRotationAxis,
-            defaultXtranslation, defaultYtranslation, defaultZtranslation),
-        walkMotionPath(walkMotionPath), eatMotionPath(eatMotionPath), dieMotionPath(dieMotionPath), joyMotionPath(joyMotionPath),
-        defaultScale(defaultYScale), defaultRotationAngle(defaultRotationAngle), defaultRotationAxis(defaultRotationAxis),
-        defaultXtranslation(defaultXtranslation), defaultYtranslation(defaultYtranslation), defaultZtranslation(defaultZtranslation)
+            defaultXtranslation, defaultYtranslation, defaultZtranslation)
     {
+        toDefaultMotion();
         initialTransformMatrix = defaultTransformMatrix;
+        
     }
 
     void toDefaultMotion() {
-        changeMotion(modelPath);
+        changeMotion(1);
     }
     void walk() {
         cout << " ** changed motion - walk";
-        changeMotion(walkMotionPath);
+        changeMotion(5);
     }
 
     void eat() {
         cout << "** changed motion - eat";
-        changeMotion(eatMotionPath);
+        changeMotion(3);
     }
 
     bool result(Food& food)
@@ -370,13 +365,13 @@ public:
         cout << "** changed motion - show result";
         if (!checkCanEat(food)) { // 먹을 수 없는 걸 먹음
             cout << "eated: " << food.PrintName() << " -- cat will die" << endl;
-            changeMotion(dieMotionPath);
+            changeMotion(4);
 
             return false;
         }
         else { // 먹을 수 있는 걸 먹음
             cout << "eated: " << food.PrintName() << " -- happy cat" << endl;
-            changeMotion(joyMotionPath);
+            changeMotion(2);
 
             return true;
         }
@@ -414,12 +409,6 @@ private:
     string eatMotionPath;
     string joyMotionPath;
     string dieMotionPath;
-    Animation defaultMotion{ modelPath, &model };
-    Animation walkMotion{ walkMotionPath, &model };
-    Animation eatMotion{ eatMotionPath, &model };
-    Animation joyMotion{ joyMotionPath, &model };
-    Animation dieMotion{ dieMotionPath, &model };
-
 };
 Cat* cat;
 Obj3D* grass;
@@ -447,7 +436,7 @@ int main()
     // -----------
     //string modelPath = modelDirStr + "/vampire/dae/dancing_vampire.dae";
     string catModelPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 고양이 모델 경로 -- 모델, 기본 모션용
-    string catWalkPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 걷는 고양이 모델 경로 -- 모션용
+    string catWalkPath = dataDirStr + "/ycat/gltfwalk/TuxCat.gltf"; // 걷는 고양이 모델 경로 -- 모션용
     string catEatPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 먹는 고양이 모델 경로 -- 모션용
     string catJoyPath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 즐거운 고양이 모델 경로 -- 모션용
     string catDiePath = dataDirStr + "/ycat/gltf/TuxCat.gltf"; // 음식 잘못먹은 고양이 모델 경로 -- 모션용
@@ -467,7 +456,7 @@ int main()
         vs, fs, // shaders
         1.f, 1.f, 1.f, // default scale
         0.f, glm::vec3(0.f, 0.f, 1.f), // default rotation
-        0.f, -1.f, 0.f // default translation
+        0.f, -1.5f, 0.f // default translation
     );
 
     grass = new Obj3D("grass", grassPath, vs, fs, 2.f, 2.f, 2.f, 0.f, glm::vec3(0.f, 1.f, 0.f), 0.f, -1.f, 0.f);
@@ -520,13 +509,13 @@ int main()
             if (gameEndingFlag) {
                 // 게임 종료 연출
 				
-				
             }
             else {
                 // ----------
                 // 고양이 모션 - 1. 밥그릇 위치까지 움직임
                 if (catMoveFlag) { // 고양이 움직임 준비
                     cout << "   cat start Move" << endl;
+                    cat->walk();
                     // starts move at next frame
                     catMoveStartTime = now;
 
@@ -915,6 +904,7 @@ void goToFirstStage()
     foodManager.reset();
 
     // 음식 배정
+    cat->toDefaultMotion();
     helperText->setText(U"방향키를 눌러 음식을 먹으세요!");
     foodManager.selectRandom(stage, foodRight);
     foodManager.selectRandom(stage, foodLeft);
@@ -934,6 +924,7 @@ void goToNextStage()
     mainText->setText(U"Stage" + intToChar32(stage + 1)); // update stage label
 
     // 음식 배정
+    cat->toDefaultMotion();
     helperText->setText(U"방향키를 눌러 음식을 먹으세요!");
     foodManager.selectRandom(stage, foodRight);
     foodManager.selectRandom(stage, foodLeft);
